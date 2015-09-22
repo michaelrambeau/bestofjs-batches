@@ -4,7 +4,7 @@
 # All existing records are first deleted.
 # The batch only scans project snapshots but does not access Github data directly.
 
-fs = require 'fs'
+fs = require 'fs-extra'
 moment = require 'moment'
 _ = require 'lodash'
 {createDailyDeltas} = require './functions'
@@ -14,7 +14,10 @@ ProjectBatch = require './../ProjectBatch'
 class CreateSuperProjects extends ProjectBatch
   constructor: (keystone) ->
     super('Create superProjects', keystone)
-    @writer = fs.createWriteStream('./build/projects.json')
+
+    # I use createOutputStream(file, [options]) from fse package
+    # Exactly like createWriteStream, but if the directory does not exist, it's created.
+    @writer = fs.createOutputStream('./build/projects.json')
     @json = []
 
   processProject: (project, cb) ->
