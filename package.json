@@ -17,6 +17,7 @@
     "minimist": "^1.1.1",
     "moment": "^2.10.3",
     "request": "^2.57.0",
-    "lodash": "^3.10.1"
+    "lodash": "^3.10.1",
+    "mongoose": "^4.1.8"
   }
 }

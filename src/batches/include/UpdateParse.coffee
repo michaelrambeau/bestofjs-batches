@@ -1,6 +1,6 @@
 Parse = require('parse').Parse
 ProjectBatch = require './../ProjectBatch'
-_ = require 'underscore'
+_ = require 'lodash'
 
 class UpdateParse extends ProjectBatch
   constructor: (keystone) ->
