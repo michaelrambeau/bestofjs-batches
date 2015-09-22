@@ -1,0 +1,22 @@
+{
+  "name": "bestofjs-batches",
+  "version": "0.0.1",
+  "description": "bestof.js.org batches (scheduled tasks)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "coffee src/start-batch.coffee superprojects"
+  },
+  "author": "Michael Rambeau",
+  "license": "ISC",
+  "dependencies": {
+    "async": "^0.9.0",
+    "coffee-script": "^1.9.2",
+    "dotenv": "^1.1.0",
+    "keen-js": "^3.2.4",
+    "minimist": "^1.1.1",
+    "moment": "^2.10.3",
+    "request": "^2.57.0",
+    "lodash": "^3.10.1"
+  }
+}
