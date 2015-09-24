@@ -75,7 +75,7 @@ function createSuperproject(project, report) {
   var data = {
     _id: project._id,
     stars: report.stars,
-    createdAt: project.createdAt,
+    //createdAt: project.createdAt,
     delta1: report.deltas.length > 0 ? report.deltas[0] : 0,
     deltas: report.deltas.slice(0, 10),
     name: project.name,
