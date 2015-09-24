@@ -1,0 +1,13 @@
+{
+  "name": "bestofjs-data",
+  "root": "./build",
+  "clean_urls": false,
+  "headers": {
+    "/**/*.json": {
+      "Access-Control-Allow-Origin": "*"
+    },
+    "/*.json": {
+      "content-type": "text/javascript"
+    }
+  }
+}

@@ -15,10 +15,10 @@ class CreateSuperProjects extends ProjectBatch
   constructor: (keystone) ->
     super('Create superProjects', keystone)
 
-    # I use createOutputStream(file, [options]) from fse package
+    # I use createOutputStream(file, [options]) from fs-extra package
     # Exactly like createWriteStream, but if the directory does not exist, it's created.
     @writer = fs.createOutputStream('./build/projects.json')
-    @json = []
+    @projects = []
 
   processProject: (project, cb) ->
     @stats.processed++
@@ -34,7 +34,7 @@ class CreateSuperProjects extends ProjectBatch
         repository: project.repository
         description: if project.description then project.description else ''
         tags: _.pluck project.tags, 'id'
-      @json.push data
+      @projects.push data
       cb()
       return
       @SuperProject.findOne()
@@ -65,14 +65,12 @@ class CreateSuperProjects extends ProjectBatch
     d.setHours(0, 0, 0, 0);
     report =
       stars: 0
-    console.log 'Searching',  project._id
     @Snapshot.find()
       .where('project').equals(project._id)
       .where('createdAt').gt(d)
       .sort
         createdAt: -1
       .exec (err, docs) =>
-        console.log 'Found', docs.length
         deltas = createDailyDeltas docs
         report =
           deltas: deltas
@@ -80,7 +78,10 @@ class CreateSuperProjects extends ProjectBatch
         cb(report)
 
   postProcess: () ->
-    @writer.write JSON.stringify(@json)
+    json =
+      projects: @projects
+      tags: []
+    @writer.write JSON.stringify(json)
     @writer.end()
 
 module.exports = CreateSuperProjects
