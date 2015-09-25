@@ -11,6 +11,6 @@ Scheduled tasks that generate static data used by bestof.js.org web application.
 
 ## Commands
 
-`npm test`; run the test batch (a simple loop through the projects stored in the database)
+`npm test`: run the test batch (a simple loop through the projects stored in the database)
 
 `npm run build`: create the json file from snapshots stored in the database.

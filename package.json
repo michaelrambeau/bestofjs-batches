@@ -4,8 +4,9 @@
   "description": "bestof.js.org batches (scheduled tasks)",
   "main": "index.js",
   "scripts": {
-    "test": "babel-node batches test",
-    "build": "babel-node batches build"
+    "batch-test": "babel-node batches test",
+    "build": "babel-node batches build",
+    "test": "babel-node tests/snapshots-spec"
   },
   "author": "Michael Rambeau",
   "license": "ISC",
@@ -21,5 +22,9 @@
     "lodash": "^3.10.1",
     "mongoose": "^4.1.8",
     "fs-extra": "^0.24.0"
+  },
+  "devDependencies": {
+    "faucet": "0.0.1",
+    "tape": "^4.2.0"
   }
 }

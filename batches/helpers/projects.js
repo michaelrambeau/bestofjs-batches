@@ -29,8 +29,25 @@ var getProjects = function(options, cb) {
   });
 };
 
+//Return the JSON object to save later in the filesystem
+function createSuperproject(project, report) {
+  var data = {
+    _id: project._id,
+    stars: report.stars,
+    //createdAt: project.createdAt,
+    delta1: report.deltas.length > 0 ? report.deltas[0] : 0,
+    deltas: report.deltas.slice(0, 10),
+    name: project.name,
+    url: project.url ? project.url : '',
+    repository: project.repository,
+    description: project.description ? project.description : '',
+    tags: _.pluck(project.tags, 'id')
+  };
+  return data;
+}
 
 module.exports = {
   processAllProjects,
-  getProjects
+  getProjects,
+  createSuperproject
 };
