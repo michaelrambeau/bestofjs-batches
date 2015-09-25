@@ -1,4 +1,4 @@
-var async = require('async');
+var {waterfall} = require('async');
 var mongoose = require('mongoose');
 //var minimist = require('minimist');
 require('dotenv').load();
@@ -23,7 +23,7 @@ db.once('open', function() {
   options.models = {Project, Snapshot, Tag};
 
   //Launch the tests!
-  async.waterfall([test1, test2, test3], function () {
+  waterfall([test1, test2, test3], function () {
     end();
   });
 });
@@ -43,8 +43,9 @@ function test1 (done) {
       if (result) {
         assert.ok(!isNaN(result.stars), 'Snapshot record should have a `stars` property');
       }
-      console.log(isTodaySnapshot(result));
+      console.log('isTodaySnapshot?', isTodaySnapshot(result));
       assert.end();
+      console.log('End of the 1st test suite.');
       done(null, true);
     });
   });
