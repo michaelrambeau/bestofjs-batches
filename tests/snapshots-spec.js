@@ -65,7 +65,9 @@ function test2(x, done) {
         }
       }
     };
+    console.log('Getting stars...');
     getStars(project, options, function (err, result) {
+      if (err) console.log('An error occurred!', err);
       assert.ok(result, 'getStars() should return something');
       if (result) {
         assert.ok(!isNaN(result.stars), 'getStars() should return the number of stars');
