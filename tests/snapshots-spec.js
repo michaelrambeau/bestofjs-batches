@@ -1,4 +1,4 @@
-var {waterfall} = require('async');
+var {parallel} = require('async');
 var mongoose = require('mongoose');
 //var minimist = require('minimist');
 require('dotenv').load();
@@ -23,8 +23,9 @@ db.once('open', function() {
   options.models = {Project, Snapshot, Tag};
 
   //Launch the tests!
-  waterfall([test1, test2, test3], function () {
-    end();
+  parallel([test1, test2, test3], function (err, result) {
+    if (err) console.log('Error caught in the main callback', err);
+    end(result);
   });
 });
 
@@ -45,13 +46,12 @@ function test1 (done) {
       }
       console.log('isTodaySnapshot?', isTodaySnapshot(result));
       assert.end();
-      console.log('End of the 1st test suite.');
       done(null, true);
     });
   });
 }
 
-function test2(x, done) {
+function test2(done) {
   test('2. Testing getStars() function', (assert) => {
     const project = {
       _id: '55ab9d0f8f937d03008d41c4',
@@ -65,7 +65,6 @@ function test2(x, done) {
         }
       }
     };
-    console.log('Getting stars...');
     getStars(project, options, function (err, result) {
       if (err) console.log('An error occurred!', err);
       assert.ok(result, 'getStars() should return something');
@@ -79,7 +78,7 @@ function test2(x, done) {
   });
 }
 
-function test3(x, done) {
+function test3(done) {
   test('3. Testing createSnapshot() function', (assert) => {
     const project = {
       _id: '55ab9d0f8f937d03008d41c4',
@@ -94,6 +93,7 @@ function test3(x, done) {
       }
     };
     createSnapshot(project, options, function (err, result) {
+      if (err) console.log('An error occurred!', err);
       assert.ok(result, 'createSnapshot() should return something');
       if (result) {
         assert.ok(result.stars, 'Snapshot should have been created');
