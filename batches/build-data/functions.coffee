@@ -31,7 +31,12 @@ createPoint = (snapshot) ->
 # INPUT: a JavaScript date object (date and time)
 # OUTPUT: a JavaScript date object (date only)
 dateOnly = (d) ->
-  d.setUTCHours(0, 0, 0, 0)
+  # Note: the 1st idea was to use setHours
+  # like this: d.setUTCHours(0, 0, 0, 0) but it return a different day, depending on the system
+  # We could use d.setUTCHours(0, 0, 0, 0) to return the day in universal time
+  # but I prefer to work with Japanese time! (GMT +9)
+  d.setHours(d.getHours() + 9,0,0,0);
+  d.setUTCHours(0,0,0,0);
   d
 
 # INPUT: a JavaScript date object (date and time)

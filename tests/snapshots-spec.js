@@ -30,7 +30,18 @@ db.once('open', function() {
   });
 });
 
+
+
 function test1 (done) {
+
+  test('Testing dateOnly', assert => {
+    const d = new Date("2015-09-25T21:10:01.436Z");
+    const expected = 26;
+    const actual = (dateOnly(d)).getDate();
+    assert.equal(actual, expected, 'Should return the day in Japanese time!');
+    assert.end();
+  });
+
   test('1. Testing snapshots functions', (assert) => {
     const project = {
       _id: '55ab9d0f8f937d03008d41c4'
