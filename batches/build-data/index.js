@@ -11,7 +11,7 @@ var write = require('./save-json');
 var start = function(batchOptions, done) {
   var defaultOptions = null;
   var options = _.defaults(batchOptions, defaultOptions);
-  console.log('Start `build-data`');
+  console.log('> Start `build-data`');
   var result = {
     processed: 0,
     error: 0

@@ -2,6 +2,7 @@ mongoose = require 'mongoose'
 
 fields =
   stars: Number
+  project: {type: mongoose.Schema.ObjectId, ref: 'Project'},
   createdAt:
     type: Date
 

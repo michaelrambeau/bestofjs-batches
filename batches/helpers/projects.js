@@ -1,6 +1,10 @@
 var _ = require('lodash');
 var async = require('async');
 
+// INPUT:
+// projects: an array of projects
+// processProject: function to be applied on each project
+// OUTPUT callback function
 var processAllProjects = function(projects, processProject, batchOptions, cb) {
   var defaultOptions, limit, options, t0;
   t0 = new Date();
@@ -19,7 +23,7 @@ var processAllProjects = function(projects, processProject, batchOptions, cb) {
 };
 
 var getProjects = function(options, cb) {
-  return options.Project.find(options.project).populate('tags').populate('snapshots').sort({
+  return options.Project.find(options.project).sort({
     createdAt: 1
   }).exec(function(err, projects) {
     if (err) {

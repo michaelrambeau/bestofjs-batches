@@ -2,8 +2,10 @@ var github = require('../helpers/github.coffee');
 var {dateOnly} = require('../build-data/functions.coffee');
 var mongoose = require('mongoose');
 
+// INPUT: project
+// OUTPUT: Github repository data
 var getStars = function(project, options, cb) {
-  return github.getRepoData(project, function(err, json) {
+  github.getRepoData(project, function(err, json) {
     if (err) {
       if (options.track) options.track({
         msg: 'Error from Github repository',
@@ -11,7 +13,7 @@ var getStars = function(project, options, cb) {
       });
       return cb(err);
     } else {
-      return cb(null, {
+      cb(null, {
         stars: json.stargazers_count,
         last_pushed: json.pushed_at
       });
@@ -19,10 +21,14 @@ var getStars = function(project, options, cb) {
   });
 };
 
+// Creates a snapshot record in the database.
+// INPUT:
+// - project
+// - options.Snapshot: Mongoose model used to create data
+// OUTPUT: created record
 var createSnapshot = function(project, options, cb) {
   getStars(project, options, function(err, githubData) {
     if (err) {
-      console.log(err);
       if (options.track) options.track({
         msg: 'Error from Github repository',
         repository: project.repository
@@ -48,14 +54,12 @@ var createSnapshot = function(project, options, cb) {
 // - options.Snapshot: Mongoose model
 // OUTPUT: the last snapshot record created in the database
 var getLastSnapshot = function(project, options, cb) {
-  console.log('Searching', project);
   options.Snapshot.findOne({'project': mongoose.Types.ObjectId(project._id)})
     .sort({
       createdAt: -1
     })
     .exec(function(err, doc) {
       if (err) return cb(err);
-      console.log('Last snapshot', doc);
       return cb(null, doc);
     });
 };
