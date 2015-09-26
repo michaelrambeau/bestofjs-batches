@@ -45,7 +45,9 @@ function createSuperproject(project, report) {
     url: project.url ? project.url : '',
     repository: project.repository,
     description: project.description ? project.description : '',
-    tags: _.pluck(project.tags, 'id')
+
+    //use .pluck to select ids only if populate() is used when making a find() request
+    tags: project.tags//_.pluck(project.tags, 'id')
   };
   return data;
 }

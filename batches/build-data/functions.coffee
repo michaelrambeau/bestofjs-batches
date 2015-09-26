@@ -31,7 +31,7 @@ createPoint = (snapshot) ->
 # INPUT: a JavaScript date object (date and time)
 # OUTPUT: a JavaScript date object (date only)
 dateOnly = (d) ->
-  d.setHours(0, 0, 0, 0)
+  d.setUTCHours(0, 0, 0, 0)
   d
 
 # INPUT: a JavaScript date object (date and time)

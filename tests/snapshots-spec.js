@@ -7,6 +7,7 @@ var test = require('tape');
 
 //Functions to test
 const { getStars, createSnapshot, getLastSnapshot, isTodaySnapshot } = require('../batches/helpers/snapshots');
+var {dateOnly} = require('../batches/build-data/functions.coffee');
 
 mongoose.connect(process.env.MONGO_URI);
 
@@ -45,6 +46,7 @@ function test1 (done) {
         assert.ok(!isNaN(result.stars), 'Snapshot record should have a `stars` property');
       }
       console.log('isTodaySnapshot?', isTodaySnapshot(result));
+      console.log('date only=',dateOnly(new Date("2015-09-25T21:10:01.436Z")));
       assert.end();
       done(null, true);
     });
