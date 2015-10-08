@@ -33,7 +33,7 @@ var start = function(batchOptions, done) {
     getSnapshotData(project, {Snapshot: options.models.Snapshot}, function (report) {
       var superproject = createSuperproject(project, report);
       superprojects.push(superproject);
-      return cb(null, superproject);
+      return cb(null, superprojects);
     });
   };
 
@@ -50,7 +50,9 @@ var start = function(batchOptions, done) {
     getTags({Tag: options.models.Tag}, function (err, tags) {
       if (err) throw err;
       callback(null, {
-        projects: superprojects,
+        //include only projects that have at least one snapshot
+        //( = include only projects created at least 2 days ago)
+        projects: superprojects.filter( project => project.deltas.length > 0 ),
         tags
       });
     });
