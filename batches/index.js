@@ -7,6 +7,7 @@ require('coffee-script/register');
 var batchTest = require('./batch-test');
 var buildData = require('./build-data');
 var takeSnapshots = require('./take-snapshots');
+var migrateTags = require('./migrate-tags');
 
 var options = {};
 
@@ -75,6 +76,11 @@ function start(key, options) {
         });
       });
       break;
+    case 'migrate-tags':
+      migrateTags(options, function (err, result) {
+        end(result);
+      });
+    break;
     default:
       console.log('Specify a valid batch key as the 1st command line argument.');
       end();

@@ -1,5 +1,5 @@
 {
-  "name": "bestofjs-data",
+  "name": "bestofjs-api-v1",
   "root": "./build",
   "clean_urls": false,
   "headers": {

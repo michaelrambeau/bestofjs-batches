@@ -2,6 +2,7 @@ mongoose = require 'mongoose'
 
 fields =
   name: String
+  code: String
   createdAt:
     type: Date
 

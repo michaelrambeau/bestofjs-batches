@@ -23,9 +23,12 @@ var processAllProjects = function(projects, processProject, batchOptions, cb) {
 };
 
 var getProjects = function(options, cb) {
-  return options.Project.find(options.project).sort({
-    createdAt: 1
-  }).exec(function(err, projects) {
+  return options.Project.find(options.project)
+    .populate('tags')
+    .sort({
+      createdAt: 1
+    })
+    .exec(function(err, projects) {
     if (err) {
       throw err;
     }
@@ -47,7 +50,8 @@ function createSuperproject(project, report) {
     description: project.description ? project.description : '',
 
     //use .pluck to select ids only if populate() is used when making a find() request
-    tags: project.tags//_.pluck(project.tags, 'id')
+    //tags: project.tags//_.pluck(project.tags, 'id')
+    tags: _.pluck(project.tags, 'code')
   };
   return data;
 }
