@@ -54,6 +54,7 @@ var createSnapshot = function(project, options, cb) {
 // - options.Snapshot: Mongoose model
 // OUTPUT: the last snapshot record created in the database
 var getLastSnapshot = function(project, options, cb) {
+  if (!options.Snapshot) return cb(new Error(`No Snapshot model passed to getLastSnapshot()`));
   options.Snapshot.findOne({'project': mongoose.Types.ObjectId(project._id)})
     .sort({
       createdAt: -1
@@ -76,9 +77,30 @@ function isTodaySnapshot(snapshot) {
   );
 }
 
+//Check if there is already a snapshot created today for the given rroject
+//and create the snapshot record in the database.
+//INPUT: a project record
+//OUTPUT: the number of stars of the created snapshot, 0 if the snapshot already exists.
+function takeOneSnapshot (project, options, cb) {
+  getLastSnapshot(project, options, function (err, snapshot) {
+    if (err) return cb(new Error('An error occured when retrieving the last snapshot.' + err.message));
+    if (snapshot && isTodaySnapshot(snapshot)) {
+      //No snapshot to take, a snapshot has already been taken today!
+      cb(null, 0);
+    } else {
+      createSnapshot(project, options, function (err, snapshot) {
+        if (err) return cb(new Error('An error occured when creating the snapshot.' + err.message));
+        const stars = snapshot.stars;
+        cb(null, stars);
+      });
+    }
+  });
+}
+
 module.exports = {
   getStars,
   createSnapshot,
   getLastSnapshot,
-  isTodaySnapshot
+  isTodaySnapshot,
+  takeOneSnapshot
 };

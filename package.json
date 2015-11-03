@@ -7,6 +7,7 @@
     "batch-test": "babel-node batches test",
     "build": "babel-node batches build",
     "snapshots": "babel-node batches snapshots",
+    "github": "babel-node batches github",
     "daily": "babel-node batches daily",
     "test": "babel-node tests/snapshots-spec"
   },

@@ -8,6 +8,15 @@ fields =
   tags:  [{type: mongoose.Schema.ObjectId, ref: 'Tag'}],
   createdAt:
     type: Date
+  # data from github API, automatically updated by batches
+  github:
+    name: String
+    full_name: String
+    description: String
+    homepage: String
+    stargazers_count: Number
+    pushed_at: Date
+
 
 schema = new mongoose.Schema fields,
   collection: 'project'

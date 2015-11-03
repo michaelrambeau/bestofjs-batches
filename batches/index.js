@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var minimist = require('minimist');
+var _ = require('lodash');
 require('dotenv').load();
 require('coffee-script/register');
 
@@ -7,6 +8,7 @@ require('coffee-script/register');
 var batchTest = require('./batch-test');
 var buildData = require('./build-data');
 var takeSnapshots = require('./take-snapshots');
+var updateGithubData = require('./update-github-data');
 var migrateTags = require('./migrate-tags');
 
 var options = {};
@@ -14,17 +16,36 @@ var options = {};
 //Check command line arguments
 var argv = minimist(process.argv.slice(2));
 
-//First argument of the command line: batch key
-var key = argv._[0];
+// First argument of the command line: batch key (`github` for example)
+var [key] = argv._;
 
-//Optional arguments: --project <id> --db test
+// Optional arguments:
+// --project <id>
+// --db <key>
+// --limit <number>
+// --debugmode
+// --readonly
 if (argv.project) {
   options.project = {_id: argv.project};
+  options.debug = true;
+}
+if (argv.debugmode) {
+  options.debug = true;
+  console.log('DEBUG mode enabled');
+}
+if (argv.readonly) {
+  options.readonly = true;
+  console.log('READONLY mode: no database write operation');
+}
+if (argv.limit) {
+  options.limit = argv.limit;
+  console.log(`Project loop limited to ${options.limit} projects.`);
 }
 
 let mongo_key = 'MONGO_URI';
 if (argv.db) {
   mongo_key = 'MONGO_URI_' + argv.db.toUpperCase();
+  console.log('Will connect to', mongo_key);
 }
 
 const mongo_uri = process.env[mongo_key];
@@ -37,12 +58,18 @@ var Project = require('../models/Project');
 var Snapshot = require('../models/Snapshot');
 var Tag = require('../models/Tag');
 
+
 //Connect to the database and launch the batch when it is OK.
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
-  console.log(`Db connection open, start the batch" ${key}"`);
-  options.models = {Project, Snapshot, Tag};
+  console.log(`Db connection open, start the batch "${key}"` + (options.debug ? ' in DEBUG MODE' : ''));
+  const models = {Project, Snapshot, Tag};
+  if (options.readonly) {
+    setReadonly(Project);
+    setReadonly(Snapshot);
+  }
+  options.models = models;
   start(key, options);
 });
 
@@ -56,6 +83,12 @@ function start(key, options) {
     case 'snapshots':
       //Daily batch part 1: create snapshots records in the database
       takeSnapshots(options, function (err, result) {
+        end(result);
+      });
+      break;
+    case 'github':
+      //Daily batch part 1: update github data and create snapshots
+      updateGithubData(options, function (err, result) {
         end(result);
       });
       break;
@@ -85,6 +118,18 @@ function start(key, options) {
       console.log('Specify a valid batch key as the 1st command line argument.');
       end();
   }
+}
+
+//Disable model write instructions.
+function setReadonly(Model) {
+  Model.schema.pre('save', function(next) {
+    var err = new Error('save() method disabled in READONLY mode');
+    next(err);
+  });
+  Model.schema.pre('create', function(next) {
+    var err = new Error('create() method disabled in READONLY mode');
+    next(err);
+  });
 }
 
 function end(result) {
