@@ -30,16 +30,16 @@ var start = function(batchOptions, done) {
 
   //STEP 1: grab all projects
   var f1 = function(callback) {
-    const limit = options.limit;
     getProjects({
       Project: options.models.Project,
-      project: options.project
+      project: options.project,
+      limit: options.limit
     },
-      (projects) =>  callback(null, limit ? projects.slice(0, limit) : projects) );
+      (projects) =>  callback(null, projects) );
   };
 
   const processProject = function (project, cb) {
-    updateProject(project, options, function (err, result) {
+    updateProject(project, options, function (err) {
       if (err) {
         console.error(`Unable to process ${project.toString()}: ${err.message}`);
         options.result.error++;

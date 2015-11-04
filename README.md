@@ -19,10 +19,24 @@ Scheduled tasks that generate static data used by bestof.js.org web application.
 
 `npm run build`: part 2 of the daily build: create the json file from snapshots stored in the database.
 
-### Debugging
 
-To process only a single project, instead of all projects in the database, add a `--project` parameter to the command.
-For example:
+## Command line parameters
+
+The **first** parameter (required) is the name of the batch to launch
+
+```
+npm run <batch_key> [-- --param1 value1 --param2 value2]
+```
+
+Optional parameters:
+
+* `--project <project_id>` process only the specified project, instead of all projects
+* `--db <key>` connect to a database whose URL is specified in the .env file `MONGO_URI_<KEY>`
+* `--readonly` run the batch in readonly mode, no database write (using Mongoose pre hooks, generate a lot of errors)
+* `--debugmode` run the batch in debug mode, with more log printed
+* `--limit <integer>` limit the project loop to n projects
+
+Example:
 
 ```
 npm run batch-test -- --project 55723c9f4140883353bc775c

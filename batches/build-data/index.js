@@ -21,7 +21,8 @@ var start = function(batchOptions, done) {
   var f1 = function(callback) {
     getProjects({
       Project: options.models.Project,
-      project: options.project
+      project: options.project,
+      limit: options.limit
     },
       (projects) =>  callback(null, projects) );
   };

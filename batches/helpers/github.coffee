@@ -3,7 +3,11 @@ async = require 'async'
 
 github =
   request: (project, path, cb) ->
-    url = project.repository.replace(/https\:\/\/github.com/, 'https://api.github.com/repos')
+    if project.github and project.github.full_name
+      url = "https://api.github.com/repos/#{project.github.full_name}"
+    else
+      url = project.repository.replace(/https\:\/\/github.com/, 'https://api.github.com/repos')
+
     url = "#{url}#{path}?client_id=#{process.env.GITHUB_CLIENT_ID}&client_secret=#{process.env.GITHUB_CLIENT_SECRET}"
     options =
       url: url

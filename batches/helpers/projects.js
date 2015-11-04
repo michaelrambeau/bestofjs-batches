@@ -29,25 +29,27 @@ var getProjects = function(options, cb) {
       createdAt: 1
     })
     .exec(function(err, projects) {
-    if (err) {
-      throw err;
-    }
-    return cb(projects);
-  });
+      if (err) {
+        throw err;
+      }
+      var limit = options.limit;
+      return cb(limit ? projects.slice(0, limit) : projects);
+    });
 };
 
 //Return the JSON object to save later in the filesystem
 function createSuperproject(project, report) {
   var data = {
+    name: project.name,//Project name entered in the application (not the one from Github)
     _id: project._id,
     stars: report.stars,
-    //createdAt: project.createdAt,
+    repository: project.repository,
     delta1: report.deltas.length > 0 ? report.deltas[0] : 0,
     deltas: report.deltas.slice(0, 10),
-    name: project.name,
-    url: project.url ? project.url : '',
-    repository: project.repository,
-    description: project.description ? project.description : '',
+    url: project.github.homepage ? project.github.homepage : '',
+    full_name: project.github.full_name,
+    description: project.github.description ? project.github.description : project.description,
+    pushed_at: project.github.pushed_at,
 
     //use .pluck to select ids only if populate() is used when making a find() request
     //tags: project.tags//_.pluck(project.tags, 'id')
