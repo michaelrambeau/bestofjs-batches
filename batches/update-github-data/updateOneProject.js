@@ -51,7 +51,6 @@ function processProject(project, options, done) {
 }
 
 function getGithubData(project, cb) {
-  console.log('Processing', project.toString());
   github.getRepoData(project, function(err, json) {
     if (err) {
       return cb(err);

@@ -100,7 +100,7 @@ function start(key, options) {
       break;
     case 'daily':
       //The daily batch
-      takeSnapshots(options, function (err, result) {
+      updateGithubData(options, function (err, result) {
         if (err) return console.log('Unexpected error during part 1', err);
         console.log(result);
         buildData(options, function (err, result) {
