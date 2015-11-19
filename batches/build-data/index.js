@@ -27,15 +27,19 @@ var start = function(batchOptions, done) {
       (projects) =>  callback(null, projects) );
   };
 
-  //STEP 2: get superprojects
-  var superprojects = [];
-  var processProject = function(project, cb) {
-    result.processed++;
-    getSnapshotData(project, {Snapshot: options.models.Snapshot}, function (report) {
-      var superproject = createSuperproject(project, report);
-      superprojects.push(superproject);
-      return cb(null, superprojects);
-    });
+  //STEP 1: grab all projects, ignoring "deprecated" and "disabled" projects
+  var f1 = function(callback) {
+    var defaultSearchOptions = {
+      disabled: {$ne: true},
+      deprecated: {$ne: true}
+    };
+    var searchOptions = _.defaults(defaultSearchOptions, options.project);
+    console.log('Searching', searchOptions);
+    getProjects({
+      Project: options.models.Project,
+      project: searchOptions
+    },
+      (projects) =>  callback(null, projects) );
   };
 
   var f2 = function(projects, callback) {

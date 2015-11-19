@@ -8,6 +8,10 @@ fields =
   tags:  [{type: mongoose.Schema.ObjectId, ref: 'Tag'}],
   createdAt:
     type: Date
+  disabled:
+    type: Boolean
+  deprecated:
+    type: Boolean
   # data from github API, automatically updated by batches
   github:
     name: String
