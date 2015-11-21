@@ -1,13 +1,11 @@
 var mongoose = require('mongoose');
 var minimist = require('minimist');
-var _ = require('lodash');
 require('dotenv').load();
 require('coffee-script/register');
 
 //Batch functions
 var batchTest = require('./batch-test');
 var buildData = require('./build-data');
-var takeSnapshots = require('./take-snapshots');
 var updateGithubData = require('./update-github-data');
 var migrateTags = require('./migrate-tags');
 
@@ -77,12 +75,6 @@ function start(key, options) {
   switch (key) {
     case 'test':
       batchTest(options, function (err, result) {
-        end(result);
-      });
-      break;
-    case 'snapshots':
-      //Daily batch part 1: create snapshots records in the database
-      takeSnapshots(options, function (err, result) {
         end(result);
       });
       break;

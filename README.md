@@ -15,7 +15,7 @@ Scheduled tasks that generate static data used by bestof.js.org web application.
 
 `npm run daily`: script to be run every day, launched by the daily build process on the CI server.
 
-`npm run snapshots`: part 1 of the daily build: take snapshots from Github.
+`npm run github`: part 1 of the daily build: update Github data and take snapshots.
 
 `npm run build`: part 2 of the daily build: create the json file from snapshots stored in the database.
 

@@ -28,11 +28,15 @@ var start = function(batchOptions, done) {
   console.log('> Start `update-github-data` batch');
 
 
-  //STEP 1: grab all projects
+  // STEP 1: grab all projects, exluding "deprecated" projects
   var f1 = function(callback) {
+    var defaultSearchOptions = {
+      deprecated: {$ne: true}
+    };
+    var searchOptions = _.defaults(defaultSearchOptions, options.project);
     getProjects({
       Project: options.models.Project,
-      project: options.project,
+      project: searchOptions,
       limit: options.limit
     },
       (projects) =>  callback(null, projects) );
