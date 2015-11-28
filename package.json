@@ -6,8 +6,8 @@
   "scripts": {
     "batch-test": "babel-node batches test",
     "build": "babel-node batches build",
-    "snapshots": "babel-node batches snapshots",
     "github": "babel-node batches github",
+    "deploy": "firebase deploy",
     "daily": "babel-node batches daily",
     "test": "babel-node tests/snapshots-spec"
   },
@@ -18,7 +18,7 @@
     "coffee-script": "^1.9.2",
     "babel": "^5.8.23",
     "dotenv": "^1.1.0",
-    "keen-js": "^3.2.4",
+    "firebase-tools": "^2.1.0",
     "minimist": "^1.1.1",
     "moment": "^2.10.3",
     "request": "^2.57.0",
