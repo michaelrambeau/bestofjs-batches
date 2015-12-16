@@ -42,7 +42,6 @@ function createSuperproject(project, report) {
   var data = {
     name: project.name,//Project name entered in the application (not the one from Github)
     stars: report.stars,
-    repository: project.repository,
     deltas: report.deltas.slice(0, 10),
     url: project.github.homepage ? project.github.homepage : '',
     full_name: project.github.full_name,//'strongloop/express' for example.
