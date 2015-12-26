@@ -15,7 +15,7 @@ var options = {};
 var argv = minimist(process.argv.slice(2));
 
 // First argument of the command line: batch key (`github` for example)
-var [key] = argv._;
+var key = argv._[0];
 
 // Optional arguments:
 // --project <id>
@@ -40,7 +40,7 @@ if (argv.limit) {
   console.log(`Project loop limited to ${options.limit} projects.`);
 }
 
-let mongo_key = 'MONGO_URI';
+var mongo_key = 'MONGO_URI';
 if (argv.db) {
   mongo_key = 'MONGO_URI_' + argv.db.toUpperCase();
   console.log('Will connect to', mongo_key);

@@ -1,8 +1,12 @@
-import _ from 'lodash';
-import async from 'async';
+var _ = require('lodash');
+var async = require('async');
 const waterfall = async.waterfall;
-import github from '../helpers/github.coffee';
-import {getLastSnapshot, isTodaySnapshot} from '../helpers/snapshots';
+
+var github = require('../helpers/github.coffee');
+
+var helpers = require('../helpers/snapshots');
+var getLastSnapshot = helpers.getLastSnapshot;
+var isTodaySnapshot = helpers.isTodaySnapshot;
 
 function processProject(project, options, done) {
 
@@ -94,4 +98,4 @@ function takeSnapshotIfNeeded (project, stars, options, cb) {
   });
 }
 
-export default processProject;
+module.exports = processProject;

@@ -3,7 +3,11 @@ var _ = require('lodash');
 var async = require('async');
 var waterfall = async.waterfall;
 
-var {processAllProjects, getProjects, createSuperproject} = require('../helpers/projects');
+var helpers = require('../helpers/projects');
+var processAllProjects = helpers.processAllProjects;
+var getProjects = helpers.getProjects;
+var createSuperproject = helpers.createSuperproject;
+
 var getSnapshotData = require('./get-snapshot-data');
 var getTags = require('./get-tags');
 var write = require('./save-json');

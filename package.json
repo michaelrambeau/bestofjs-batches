@@ -1,24 +1,22 @@
 {
   "name": "bestofjs-batches",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "bestof.js.org batches (scheduled tasks)",
   "main": "index.js",
   "scripts": {
-    "batch-test": "babel-node batches test",
-    "build": "babel-node batches build",
-    "github": "babel-node batches github",
+    "batch-test": "node batches test",
+    "build": "node batches build",
+    "github": "node batches github",
     "deploy": "firebase deploy",
     "deploy-dev": "firebase deploy -f bestofjs-api-dev",
-    "daily": "babel-node batches daily",
-    "test": "babel-node tests/snapshots-spec"
+    "daily": "node batches daily",
+    "test": "node tests/snapshots-spec --harmony"
   },
   "author": "Michael Rambeau",
   "license": "ISC",
+  "engines" : { "node" : ">=5.1.0" },
   "dependencies": {
     "async": "^0.9.0",
-    "coffee-script": "^1.9.2",
-    "babel-cli": "^6.1.18",
-    "babel-preset-es2015": "^6.1.18",
     "dotenv": "^1.1.0",
     "firebase-tools": "^2.1.0",
     "minimist": "^1.1.1",

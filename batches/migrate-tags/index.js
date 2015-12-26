@@ -20,7 +20,7 @@ function processTag(tag, done) {
 //Set tag code to lower case
 function overwriteTagCode(tag, done) {
   console.log('Processing', tag.code);
-  let code = tag.code;
+  var code = tag.code;
   code = code.toLowerCase();
   tag.code = code;
   tag.save(function (err, tag) {

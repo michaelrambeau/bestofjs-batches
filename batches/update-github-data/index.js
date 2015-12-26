@@ -10,9 +10,11 @@
 var _ = require('lodash');
 var async = require('async');
 var waterfall = async.waterfall;
-import updateProject from './updateOneProject';
+var updateProject = require('./updateOneProject');
 
-const { processAllProjects, getProjects } = require('../helpers/projects');
+var helpers = require('../helpers/projects');
+var processAllProjects = helpers.processAllProjects;
+var getProjects = helpers.getProjects;
 
 var start = function(batchOptions, done) {
   var defaultOptions = {
