@@ -1,7 +1,6 @@
 var parallel = require('async').parallel;
 var mongoose = require('mongoose');
 require('dotenv').load();
-require('coffee-script/register');
 var test = require('tape');
 
 //Functions to test
@@ -10,7 +9,7 @@ const getStars = helpers.getStars;
 const createSnapshot = helpers.createSnapshot;
 const getLastSnapshot = helpers.getLastSnapshot;
 const isTodaySnapshot = helpers.isTodaySnapshot;
-var dateOnly = require('../batches/build-data/functions.coffee').dateOnly;
+var dateOnly = require('../batches/build-data/functions').dateOnly;
 
 mongoose.connect(process.env.MONGO_URI);
 

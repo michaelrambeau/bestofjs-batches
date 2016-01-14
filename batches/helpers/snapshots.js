@@ -1,5 +1,5 @@
-var github = require('../helpers/github.coffee');
-var dateOnly = require('../build-data/functions.coffee').dateOnly;
+var github = require('../helpers/github');
+var dateOnly = require('../build-data/functions').dateOnly;
 var mongoose = require('mongoose');
 
 // INPUT: project

@@ -2,7 +2,7 @@ var _ = require('lodash');
 var async = require('async');
 const waterfall = async.waterfall;
 
-var github = require('../helpers/github.coffee');
+var github = require('../helpers/github');
 
 var helpers = require('../helpers/snapshots');
 var getLastSnapshot = helpers.getLastSnapshot;

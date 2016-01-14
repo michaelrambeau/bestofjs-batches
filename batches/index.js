@@ -1,7 +1,6 @@
 var mongoose = require('mongoose');
 var minimist = require('minimist');
 require('dotenv').load();
-require('coffee-script/register');
 
 //Batch functions
 var batchTest = require('./batch-test');

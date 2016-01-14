@@ -1,5 +1,5 @@
 var moment = require('moment');
-var createDailyDeltas = require('./functions.coffee').createDailyDeltas;
+var createDailyDeltas = require('./functions').createDailyDeltas;
 
 // Return an object with 2 properties
 // - stars: current number of stars
