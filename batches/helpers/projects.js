@@ -40,6 +40,7 @@ var getProjects = function(options, cb) {
 //Return the JSON object to save later in the filesystem
 function createSuperproject(project, report) {
   var data = {
+    _id: project._id,
     name: project.name,//Project name entered in the application (not the one from Github)
     stars: report.stars,
     deltas: report.deltas.slice(0, 10),
