@@ -1,12 +1,14 @@
 var mongoose = require('mongoose');
 var minimist = require('minimist');
 require('dotenv').load();
+mongoose.Promise = require('bluebird');
 
 //Batch functions
 var batchTest = require('./batch-test');
 var buildData = require('./build-data');
 var updateGithubData = require('./update-github-data');
 var migrateTags = require('./migrate-tags');
+var updateHoF = require('./hof');
 
 var options = {};
 
@@ -54,6 +56,7 @@ mongoose.connect(mongo_uri);
 var Project = require('../models/Project');
 var Snapshot = require('../models/Snapshot');
 var Tag = require('../models/Tag');
+var Hero = require('../models/Hero');
 
 
 //Connect to the database and launch the batch when it is OK.
@@ -61,7 +64,7 @@ var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
   console.log(`Db connection open, start the batch "${key}"` + (options.debug ? ' in DEBUG MODE' : ''));
-  const models = {Project, Snapshot, Tag};
+  const models = {Project, Snapshot, Tag, Hero};
   if (options.readonly) {
     setReadonly(Project);
     setReadonly(Snapshot);
@@ -81,6 +84,11 @@ function start(key, options) {
       //Daily batch part 1: update github data and create snapshots
       updateGithubData(options, function (err, result) {
         end(result);
+      });
+      break;
+    case 'hof':
+      updateHoF(options, function (err, result) {
+        end(err ? err.toString() : result);
       });
       break;
     case 'build':

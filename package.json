@@ -1,33 +1,40 @@
 {
   "name": "bestofjs-batches",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "bestof.js.org batches (scheduled tasks)",
   "main": "index.js",
   "scripts": {
+    "daily": "node batches github && node batches hof && node batches deploy",
     "batch-test": "node batches test",
     "build": "node batches build",
     "github": "node batches github",
     "deploy": "firebase deploy",
     "deploy-dev": "firebase deploy -f bestofjs-api-dev",
-    "daily": "node batches daily",
-    "test": "node tests/snapshots-spec --harmony"
+    "test": "node tests/snapshots-spec --harmony",
+    "lint": "standard ./batches/hof/index.js"
   },
   "author": "Michael Rambeau",
   "license": "ISC",
-  "engines" : { "node" : ">=5.1.0" },
+  "engines": {
+    "node": ">=5.1.0"
+  },
   "dependencies": {
     "async": "0.9.2",
+    "bluebird": "^3.3.5",
     "dotenv": "1.2.0",
     "firebase-tools": "2.2.0",
+    "fs-extra": "0.24.0",
+    "lodash": "3.10.1",
     "minimist": "1.2.0",
     "moment": "2.10.6",
-    "request": "2.63.0",
-    "lodash": "3.10.1",
     "mongoose": "4.3.4",
-    "fs-extra": "0.24.0"
+    "request": "2.63.0"
   },
   "devDependencies": {
+    "eslint": "^2.9.0",
+    "eslint-config-standard": "^5.3.0",
     "faucet": "0.0.1",
+    "standard": "^6.0.8",
     "tape": "4.2.0"
   }
 }

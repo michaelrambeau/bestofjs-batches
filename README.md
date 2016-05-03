@@ -1,4 +1,4 @@
-# bestofjs-batches v1
+# bestofjs-batches v0.3
 
 Scheduled tasks that generate static data used by bestof.js.org web application.
 
@@ -7,7 +7,7 @@ Scheduled tasks that generate static data used by bestof.js.org web application.
 ## Strategy
 
 * Use [semaphoreci.com](https://semaphoreci.com/) "build scheduler" feature to build a static JSON file every day.
-* Use [divshot.io](https://divshot.com/) static hosting service to host the JSON file, requested by Ajax from the web application.
+* Use [firebase.com](https://www.firebase.com/) static hosting service to host the JSON file, requested by Ajax from the web application.
 
 ## Commands
 
