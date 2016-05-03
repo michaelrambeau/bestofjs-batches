@@ -4,7 +4,7 @@
   "description": "bestof.js.org batches (scheduled tasks)",
   "main": "index.js",
   "scripts": {
-    "daily": "node batches github && node batches hof && node batches deploy",
+    "daily": "node batches github && node batches hof && npm run deploy",
     "batch-test": "node batches test",
     "build": "node batches build",
     "github": "node batches github",
