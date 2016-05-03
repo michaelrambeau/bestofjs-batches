@@ -6,7 +6,7 @@ const fields = ['name', 'avatar_url', 'followers']
 module.exports = function (hero, options) {
   return new Promise(function (resolve, reject) {
     const login = hero.github.login
-    if (options.debug) console.log('Processing the hero', login);
+    if (options.debug) console.log('Processing the hero', hero.projects);
     github.getUserData(login, function (err, json) {
       if (err) return reject(err);
       if (options.debug) console.log('Github API response OK', login);
@@ -36,12 +36,21 @@ module.exports = function (hero, options) {
 }
 
 function success(hero, saved) {
-  const json = {
-    meta: {
-      saved,
-      processed: true
-    },
-    payload: hero.github
+  const payload = {
+    username: hero.github.login,
+    avatar: hero.github.avatar_url,
+    followers: hero.github.followers,
+    name: hero.github.name,
+    projects: hero.projects
   }
-  return json
+  console.log('PAYLOAD', payload)
+  const meta = {
+    saved,
+    processed: true
+  }
+
+  return {
+    meta,
+    payload
+  }
 }

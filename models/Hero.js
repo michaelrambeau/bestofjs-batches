@@ -4,6 +4,10 @@ const fields = {
   createdAt: {
     type: Date
   },
+  projects: {
+    type: [mongoose.Schema.ObjectId],
+    ref: 'Project'
+  },
   github: {
     login: String,
     name: String,

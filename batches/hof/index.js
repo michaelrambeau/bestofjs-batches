@@ -6,6 +6,7 @@ const writeFile = require('./writeFile')
 module.exports = function (options, done) {
   const model = options.models.Hero
   model.find()
+    .sort({'github.followers': -1})
     .limit(options.limit)
     .then(docs => {
       console.log(docs.length, 'heroes to process...')
@@ -22,6 +23,8 @@ module.exports = function (options, done) {
           console.log('STEP 1 OK', report)
           return results.map(result => result.payload)
         })
+        // sort results by followers
+        .then(heroes => heroes.sort((a, b) => getFollowers(a) > getFollowers(b) ? -1 : 1))
         // STEP 2: write the JSON file
         .then(heroes => writeFile(heroes))
         .then(result => done(null, result))
@@ -51,4 +54,8 @@ function createReport (results, fields) {
     return report
   }
   return results.reduce(reducer, initialReport)
+}
+
+function getFollowers(hero) {
+  return hero.followers
 }
