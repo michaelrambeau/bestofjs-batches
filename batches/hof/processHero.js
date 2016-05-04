@@ -41,14 +41,13 @@ function success(hero, saved) {
     avatar: hero.github.avatar_url,
     followers: hero.github.followers,
     name: hero.github.name,
-    projects: hero.projects
+    projects: hero.projects,
+    bio: hero.short_bio
   }
-  console.log('PAYLOAD', payload)
   const meta = {
     saved,
     processed: true
   }
-
   return {
     meta,
     payload

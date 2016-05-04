@@ -8,6 +8,7 @@ const fields = {
     type: [mongoose.Schema.ObjectId],
     ref: 'Project'
   },
+  short_bio: String,
   github: {
     login: String,
     name: String,
