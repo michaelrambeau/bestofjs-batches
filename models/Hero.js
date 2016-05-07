@@ -13,7 +13,12 @@ const fields = {
     login: String,
     name: String,
     avatar_url: String,
+    blog: String,
     followers: Number
+  },
+  npm: {
+    count: Number,
+    username: String
   }
 }
 
@@ -22,7 +27,7 @@ const schema = new mongoose.Schema(fields, {
 })
 
 schema.methods.toString = function () {
-  return `${this.github.login} (${this.github.name}) ${this.github.followers}`
+  return `${this.github.login} (${this.github.name}) ${this.github.followers} followers, ${this.npm.count} modules`
 }
 
 const model = mongoose.model('Hero', schema)
