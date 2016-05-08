@@ -78,6 +78,7 @@ function success (hero, saved) {
     name: hero.github.name,
     projects: hero.projects,
     bio: hero.short_bio,
+    npm: hero.npm.username,
     modules: hero.npm.count
   }
   const meta = {
