@@ -28,6 +28,7 @@
     "minimist": "1.2.0",
     "moment": "2.10.6",
     "mongoose": "4.3.4",
+    "node-fetch": "^1.5.3",
     "request": "2.63.0",
     "scrape-it": "^3.0.1"
   },

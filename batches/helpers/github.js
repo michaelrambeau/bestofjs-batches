@@ -1,7 +1,7 @@
 const request = require('request')
 const fetch = require('node-fetch')
 
-function githubRequest(url, cb) {
+function githubRequest (url, cb) {
   const fullUrl = `https://api.github.com/${url}?client_id=${process.env.GITHUB_CLIENT_ID}&client_secret=${process.env.GITHUB_CLIENT_SECRET}`
   const options = {
     url: fullUrl,
@@ -10,17 +10,16 @@ function githubRequest(url, cb) {
       'Accept': 'application/vnd.github.quicksilver-preview+json'
     }
   }
-  return request.get(options, function(error, response, body) {
+  return request.get(options, function (error, response, body) {
     if (!error && response.statusCode === 200) {
       try {
         var json = JSON.parse(body)
         return cb(null, json)
-      } catch (error1) {
-        error = error1
-        return cb(new Error("Unable to parse JSON response from Github for url " + url + ": " + error))
+      } catch (err) {
+        return cb(new Error(`Unable to parse JSON response from Github for url "${url}": ${err}`))
       }
     } else {
-      return cb(new Error("Invalid response from Github for url " + url))
+      return cb(new Error(`Invalid response from Github for url "${url}"`))
     }
   })
 }
