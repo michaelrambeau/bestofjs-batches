@@ -36,6 +36,9 @@ fields = {
     name: String,
     version: String,
     dependencies: [String]
+  },
+  packagequality: {
+    quality: Number
   }
 }
 

@@ -7,6 +7,7 @@ mongoose.Promise = require('bluebird')
 const batchTest = require('./batch-test')
 const buildData = require('./build-data')
 const updateGithubData = require('./update-github-data')
+const updateNpmData = require('./update-npm-data')
 const migrateTags = require('./migrate-tags')
 const updateHoF = require('./hof')
 const initNpm = require('./init-npm')
@@ -115,6 +116,11 @@ function start (key, options) {
       break
     case 'init-npm':
       initNpm(options, function (err, result) {
+        end(err, result)
+      })
+      break
+    case 'npm':
+      updateNpmData(options, function (err, result) {
         end(err, result)
       })
       break

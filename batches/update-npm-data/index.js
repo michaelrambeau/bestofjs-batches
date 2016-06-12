@@ -7,33 +7,34 @@
 // IF it is not today's snapshot =>
 //   - save a "snapshot" record in the database
 
-var _ = require('lodash')
-var async = require('async')
-var waterfall = async.waterfall
-var updateProject = require('./updateOneProject')
+const _ = require('lodash')
+const async = require('async')
+const waterfall = async.waterfall
+const updateProject = require('./updateOneProject')
 
-var helpers = require('../helpers/projects')
-var processAllProjects = helpers.processAllProjects
-var getProjects = helpers.getProjects
+const helpers = require('../helpers/projects')
+const processAllProjects = helpers.processAllProjects
+const getProjects = helpers.getProjects
 
-var start = function (batchOptions, done) {
-  var defaultOptions = {
+const start = function (batchOptions, done) {
+  const defaultOptions = {
     result: {
       processed: 0,
       updated: 0,
       created: 0,
-      error: 0,
-      stars: 0
+      error: 0
     }
   }
-  var options = _.defaults(batchOptions, defaultOptions)
+  const options = _.defaults(batchOptions, defaultOptions)
+  console.log('> Start `update-npm-data` batch')
 
   // STEP 1: grab all projects, exluding "deprecated" projects
-  var f1 = function (callback) {
-    var defaultSearchOptions = {
-      deprecated: {$ne: true}
+  const f1 = function (callback) {
+    const defaultSearchOptions = {
+      deprecated: {$ne: true},
+      'npm.name': {$ne: ''}
     }
-    var searchOptions = _.defaults(defaultSearchOptions, options.project)
+    const searchOptions = _.defaults(defaultSearchOptions, options.project)
     getProjects({
       Project: options.models.Project,
       project: searchOptions,
@@ -53,7 +54,7 @@ var start = function (batchOptions, done) {
   }
 
   // STEP 2: take the snapshot for every project (if it has been already taken today)
-  var f2 = function (projects, callback) {
+  const f2 = function (projects, callback) {
     processAllProjects(
       projects,
       processProject,
