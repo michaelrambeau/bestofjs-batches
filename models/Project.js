@@ -1,6 +1,6 @@
-var fields, model, mongoose, schema;
+var fields, model, mongoose, schema
 
-mongoose = require('mongoose');
+mongoose = require('mongoose')
 
 fields = {
   name: String,
@@ -28,18 +28,25 @@ fields = {
     description: String,
     homepage: String,
     stargazers_count: Number,
-    pushed_at: Date
+    pushed_at: Date,
+    branch: String,
+    packageJson: Boolean
+  },
+  npm: {
+    name: String,
+    version: String,
+    dependencies: [String]
   }
-};
+}
 
 schema = new mongoose.Schema(fields, {
   collection: 'project'
-});
+})
 
-schema.methods.toString = function() {
-  return "Project " + this.name + ' ' + this._id;
-};
+schema.methods.toString = function () {
+  return `Project ${this.name} ${this._id}`
+}
 
-model = mongoose.model('Project', schema);
+model = mongoose.model('Project', schema)
 
-module.exports = model;
+module.exports = model
