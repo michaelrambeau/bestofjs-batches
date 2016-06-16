@@ -27,7 +27,7 @@ var start = function(batchOptions, done) {
     }
   };
   var options = _.defaults(batchOptions, defaultOptions);
-  console.log('> Start `update-github-data` batch');
+  console.log('> Start `update-github-data` batch', options.limit);
 
 
   // STEP 1: grab all projects, exluding "deprecated" projects

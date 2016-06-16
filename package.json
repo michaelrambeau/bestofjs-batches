@@ -10,11 +10,12 @@
     "github": "node batches github",
     "deploy": "firebase deploy",
     "deploy-dev": "firebase deploy -f bestofjs-api-dev",
-    "test": "node tests/snapshots-spec --harmony",
+    "test": "tape tests/**/*-spec.js",
+    "test-debug": "tape tests/trends-spec.js",
     "lint": "standard ./batches/hof/index.js"
   },
   "author": "Michael Rambeau",
-  "license": "ISC",
+  "license": "MIT",
   "engines": {
     "node": ">=5.1.0"
   },
