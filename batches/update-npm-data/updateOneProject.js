@@ -9,7 +9,7 @@ function processProject (project, options, done) {
 
   // Get data from Github API
   const f1 = function (callback) {
-    if (project.npm.name === 'undefined') {
+    if (project.npm.name === '') {
       return callback(null, {
         npm: {
           name: ''
@@ -26,7 +26,7 @@ function processProject (project, options, done) {
   }
 
   const f2 = function (json, callback) {
-    if (project.npm.name === 'undefined') {
+    if (project.npm.name === '') {
       return callback(null, {
         packagequality: {
           quality: 0
@@ -68,7 +68,7 @@ function getNpmData (project, cb) {
   npm.getNpmRegistryData(project.npm.name, function (err, result) {
     if (err) return cb(err)
     return cb(null, {
-      name: result.name,
+      name: project.npm.name, // don't use result.name here, we don't want to override name because of scoped packages!
       version: result.version,
       dependencies: npm.formatDependencies(result.dependencies)
     })
