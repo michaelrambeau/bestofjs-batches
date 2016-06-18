@@ -17,7 +17,7 @@
   "author": "Michael Rambeau",
   "license": "MIT",
   "engines": {
-    "node": ">=5.1.0"
+    "node": ">=6.2.0"
   },
   "dependencies": {
     "async": "0.9.2",
