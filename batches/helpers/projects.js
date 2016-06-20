@@ -58,6 +58,7 @@ function createSuperproject (project, report) {
   if (project.npm && project.npm.name) {
     data.npm = project.npm.name
     data.quality = project.packagequality.quality || 0
+    data.version = project.npm.version
   }
   return data
 }
