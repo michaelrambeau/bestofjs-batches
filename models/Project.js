@@ -39,6 +39,16 @@ fields = {
   },
   packagequality: {
     quality: Number
+  },
+  npms: {
+    score: {
+      detail: {
+        maintenance: Number,
+        popularity: Number,
+        quality: Number
+      },
+      final: Number
+    }
   }
 }
 

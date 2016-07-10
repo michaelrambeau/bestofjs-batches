@@ -39,6 +39,14 @@ function getPackageQualityData (packageName, cb) {
     .catch(err => cb(err))
 }
 
+function getNpmsData (packageName, cb) {
+  const url = `https://api.npms.io/module/${packageName}`
+  fetch(url)
+    .then(r => r.json())
+    .then(json => cb(null, json))
+    .catch(err => cb(new Error(`Invalid response from ${url}`)))
+}
+
 function formatDependencies (dependencies) {
   return dependencies ? Object.keys(dependencies) : []
 }
@@ -61,5 +69,6 @@ function parsePackageName (packageName) {
 module.exports = {
   getNpmRegistryData,
   getPackageQualityData,
+  getNpmsData,
   formatDependencies
 }

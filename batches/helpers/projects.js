@@ -9,7 +9,7 @@ var processAllProjects = function (projects, processProject, batchOptions, cb) {
   var defaultOptions, limit, options, t0
   t0 = new Date()
   defaultOptions = {
-    parallelLimit: 10
+    parallelLimit: 50
   }
   options = _.extend(defaultOptions, batchOptions)
   limit = options.parallelLimit
@@ -60,6 +60,12 @@ function createSuperproject (project, report) {
     data.quality = project.packagequality.quality || 0
     data.version = project.npm.version
   }
+
+  // Add data from npms.io API
+  if (project.npms && project.npms.score) {
+    data.score = project.npms.score.final || 0
+  }
+
   return data
 }
 
