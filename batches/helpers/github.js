@@ -19,7 +19,7 @@ function githubRequest (url, cb) {
         return cb(new Error(`Unable to parse JSON response from Github for url "${url}": ${err}`))
       }
     } else {
-      return cb(new Error(`Invalid response from Github for url "${url}" ${response.statusCode} ${error ? error.toString() : ''}`))
+      return cb(new Error(`Invalid response from Github for url "${url}" ${response ? response.statusCode : ''} ${error ? error.toString() : ''}`))
     }
   })
 }
