@@ -9,7 +9,7 @@ var processAllProjects = function (projects, processProject, batchOptions, cb) {
   var defaultOptions, limit, options, t0
   t0 = new Date()
   defaultOptions = {
-    parallelLimit: 50
+    parallelLimit: 20
   }
   options = _.extend(defaultOptions, batchOptions)
   limit = options.parallelLimit
