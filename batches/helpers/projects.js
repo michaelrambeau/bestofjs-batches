@@ -12,12 +12,13 @@ var processAllProjects = function (projects, processProject, batchOptions, cb) {
     parallelLimit: 20
   }
   options = _.extend(defaultOptions, batchOptions)
+  const logger = options.logger
   limit = options.parallelLimit
-  console.log(projects.length, 'project(s) to process... async limit=', limit)
+  logger.info(projects.length, 'project(s) to process... async limit=', limit)
   async.eachLimit(projects, limit, processProject, function (err) {
-    if (err) console.error('Error', err)
+    if (err) logger.error('Error', err)
     var duration = (new Date() - t0) / 1000
-    console.log('End of the project loop', duration)
+    logger.info('End of the project loop', duration)
     return cb()
   })
 }

@@ -26,7 +26,8 @@ const start = function (batchOptions, done) {
     }
   }
   const options = _.defaults(batchOptions, defaultOptions)
-  console.log('> Start `update-npm-data` batch')
+  const { logger } = options
+  logger.info('> Start `update-npm-data` batch')
 
   // STEP 1: grab all projects, exluding "deprecated" projects
   const f1 = function (callback) {
@@ -46,7 +47,7 @@ const start = function (batchOptions, done) {
   const processProject = function (project, cb) {
     updateProject(project, options, function (err) {
       if (err) {
-        console.error(`Unable to process ${project.toString()}: ${err.message}`)
+        logger.error(`Unable to process ${project.toString()}: ${err.message}`)
         options.result.error++
       }
       cb(null, true)
@@ -58,7 +59,7 @@ const start = function (batchOptions, done) {
     processAllProjects(
       projects,
       processProject,
-      null,
+      { logger },
       () => callback(null, options.result))
   }
 

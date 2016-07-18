@@ -30,6 +30,7 @@ npm run <batch_key> [-- --param1 value1 --param2 value2]
 
 Optional parameters:
 
+* `--loglevel info|verbose|debug` specify the log level
 * `--project <project_id>` process only the specified project, instead of all projects
 * `--db <key>` connect to a database whose URL is specified in the .env file `MONGO_URI_<KEY>`
 * `--readonly` run the batch in readonly mode, no database write (using Mongoose pre hooks, generate a lot of errors)

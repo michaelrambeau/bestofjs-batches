@@ -8,7 +8,8 @@ const pointsToDeltas = helpers.pointsToDeltas
 // - stars: current number of stars
 // - deltas: daily star variations
 const getSnapshotData = function (project, options, cb) {
-  if (options.debug) console.log('getSnapshotData', project.name)
+  const { logger } = options
+  logger.debug('getSnapshotData', project.name)
   var d = moment().subtract(100, 'days').toDate()
   d.setHours(0, 0, 0, 0)
   options.Snapshot

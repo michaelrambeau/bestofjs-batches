@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const minimist = require('minimist')
 require('dotenv').load()
+const getOptions = require('./getOptions')
 mongoose.Promise = require('bluebird')
 
 // Batch functions
@@ -12,46 +13,22 @@ const migrateTags = require('./migrate-tags')
 const updateHoF = require('./hof')
 const initNpm = require('./init-npm')
 
-const options = {}
-
-// Check command line arguments
 const argv = minimist(process.argv.slice(2))
+const options = getOptions(argv)
+const logger = options.logger
 
 // First argument of the command line: batch key (`github` for example)
 const key = argv._[0]
 
-// Optional arguments:
-// --project <id>
-// --db <key>
-// --limit <number>
-// --debugmode
-// --readonly
-if (argv.project) {
-  options.project = {_id: argv.project}
-  options.debug = true
-}
-if (argv.debugmode) {
-  options.debug = true
-  console.log('DEBUG mode enabled')
-}
-if (argv.readonly) {
-  options.readonly = true
-  console.log('READONLY mode: no database write operation')
-}
-if (argv.limit) {
-  options.limit = argv.limit
-  console.log(`Project loop limited to ${options.limit} projects.`)
-}
-
 var mongo_key = 'MONGO_URI'
 if (argv.db) {
   mongo_key = 'MONGO_URI_' + argv.db.toUpperCase()
-  console.log('Will connect to', mongo_key)
+  logger.info('Will connect to', mongo_key)
 }
 
 const mongo_uri = process.env[mongo_key]
-if (!mongo_uri) throw new Error(`"${mongo_key}" env. constiable is not defined.`)
-console.log('Connecting to', mongo_uri)
+if (!mongo_uri) throw new Error(`"${mongo_key}" env. variable is not defined.`)
+logger.info('Connecting to', mongo_uri)
 mongoose.connect(mongo_uri)
 
 // Load Mongoose models
@@ -62,9 +39,9 @@ const Hero = require('../models/Hero')
 
 // Connect to the database and launch the batch when it is OK.
 const db = mongoose.connection
-db.on('error', console.error.bind(console, 'connection error:'))
+db.on('error', (err) => logger.error(`Db connection error ${err.toString()}`))
 db.once('open', function () {
-  console.log(`Db connection open, start the batch "${key}"` + (options.debug ? ' in DEBUG MODE' : ''))
+  logger.info(`Db connection open, start the batch "${key}"`)
   const models = {Project, Snapshot, Tag, Hero}
   if (options.readonly) {
     setReadonly(Project)
@@ -75,6 +52,7 @@ db.once('open', function () {
 })
 
 function start (key, options) {
+  logger.profile('batch')
   switch (key) {
     case 'test':
       batchTest(options, function (err, result) {
@@ -101,10 +79,10 @@ function start (key, options) {
     case 'daily':
       // The daily batch
       updateGithubData(options, function (err, result) {
-        if (err) return console.log('Unexpected error during part 1', err)
-        console.log(result)
+        if (err) return logger.error('Unexpected error during part 1', err)
+        logger.info(result)
         buildData(options, function (err, result) {
-          if (err) return console.log('Unexpected error during part 2', err)
+          if (err) return logger.error('Unexpected error during part 2', err)
           end(err, result)
         })
       })
@@ -125,7 +103,7 @@ function start (key, options) {
       })
       break
     default:
-      console.log('Specify a valid batch key as the 1st command line argument.')
+      logger.error('Specify a valid batch key as the 1st command line argument.')
       end()
   }
 }
@@ -143,7 +121,8 @@ function setReadonly (Model) {
 }
 
 function end (err, result) {
+  logger.profile('batch')
   mongoose.disconnect()
-  if (err) return console.log('--- THE END with an error ---', err)
-  console.log('--- END ---', result)
+  if (err) return logger.error('--- THE END with an error ---', err)
+  logger.info('--- END ---', result)
 }

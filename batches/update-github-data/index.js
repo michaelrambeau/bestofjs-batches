@@ -7,16 +7,16 @@
 // IF it is not today's snapshot =>
 //   - save a "snapshot" record in the database
 
-var _ = require('lodash');
-var async = require('async');
-var waterfall = async.waterfall;
-var updateProject = require('./updateOneProject');
+var _ = require('lodash')
+var async = require('async')
+var waterfall = async.waterfall
+var updateProject = require('./updateOneProject')
 
-var helpers = require('../helpers/projects');
-var processAllProjects = helpers.processAllProjects;
-var getProjects = helpers.getProjects;
+var helpers = require('../helpers/projects')
+var processAllProjects = helpers.processAllProjects
+var getProjects = helpers.getProjects
 
-var start = function(batchOptions, done) {
+var start = function (batchOptions, done) {
   var defaultOptions = {
     result: {
       processed: 0,
@@ -25,45 +25,46 @@ var start = function(batchOptions, done) {
       error: 0,
       stars: 0
     }
-  };
-  var options = _.defaults(batchOptions, defaultOptions);
-  console.log('> Start `update-github-data` batch', options.limit);
-
+  }
+  var options = _.defaults(batchOptions, defaultOptions)
+  const { logger } = options
+  logger.info('Start `update-github-data` batch', options.limit)
 
   // STEP 1: grab all projects, exluding "deprecated" projects
-  var f1 = function(callback) {
+  var f1 = function (callback) {
     var defaultSearchOptions = {
       deprecated: {$ne: true}
-    };
-    var searchOptions = _.defaults(defaultSearchOptions, options.project);
+    }
+    var searchOptions = _.defaults(defaultSearchOptions, options.project)
     getProjects({
       Project: options.models.Project,
       project: searchOptions,
-      limit: options.limit
+      limit: options.limit,
+      logger
     },
-      (projects) =>  callback(null, projects) );
-  };
+      (projects) => callback(null, projects))
+  }
 
   const processProject = function (project, cb) {
     updateProject(project, options, function (err) {
       if (err) {
-        console.error(`Unable to process ${project.toString()}: ${err.message}`);
-        options.result.error++;
+        logger.error(`Unable to process ${project.toString()}: ${err.message}`)
+        options.result.error++
       }
-      cb(null, true);
-    });
-  };
+      cb(null, true)
+    })
+  }
 
-  //STEP 2: take the snapshot for every project (if it has been already taken today)
-  var f2 = function(projects, callback) {
+  // STEP 2: take the snapshot for every project (if it has been already taken today)
+  var f2 = function (projects, callback) {
     processAllProjects(
       projects,
       processProject,
-      null,
-      () => callback(null, options.result) );
-  };
+      { logger },
+      () => callback(null, options.result))
+  }
 
-  return waterfall([f1, f2], done);
-};
+  return waterfall([f1, f2], done)
+}
 
-module.exports = start;
+module.exports = start

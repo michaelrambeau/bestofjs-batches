@@ -15,7 +15,8 @@ var write = require('./save-json')
 var start = function (batchOptions, done) {
   var defaultOptions = null
   var options = _.defaults(batchOptions, defaultOptions)
-  console.log('> Start `build-data`')
+  const { logger } = options
+  logger.info('> Start `build-data`')
   var result = {
     processed: 0,
     error: 0
@@ -31,7 +32,8 @@ var start = function (batchOptions, done) {
     getProjects({
       Project: options.models.Project,
       project: searchOptions,
-      limit: options.limit
+      limit: options.limit,
+      logger
     },
       (projects) => callback(null, projects))
   }
@@ -42,13 +44,13 @@ var start = function (batchOptions, done) {
     result.processed++
     const opts = {
       Snapshot: options.models.Snapshot,
-      debug: options.debug
+      debug: options.debug,
+      logger
     }
     getSnapshotData(project, opts, function (err, report) {
       if (err) return cb(err)
       var superproject = createSuperproject(project, report)
       superprojects.push(superproject)
-      if (options.debug) console.log('superprojects', superprojects)
       return cb(null, superprojects)
     })
   }
@@ -57,7 +59,7 @@ var start = function (batchOptions, done) {
     processAllProjects(
       projects,
       processProject,
-      null,
+      { logger },
       () => callback(null, superprojects))
   }
 

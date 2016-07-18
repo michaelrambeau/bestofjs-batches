@@ -5,11 +5,12 @@ const writeFile = require('./writeFile')
 
 module.exports = function (options, done) {
   const model = options.models.Hero
+  const logger = options.logger
   model.find()
     .sort({'github.followers': -1})
     .limit(options.limit)
     .then(docs => {
-      console.log(docs.length, 'heroes to process...')
+      logger.info(docs.length, 'heroes to process...')
       const p = docs.map(doc => (
         processHero(doc, options)
       ))
@@ -20,21 +21,21 @@ module.exports = function (options, done) {
             results.map(result => result.meta),
             ['processed', 'saved']
           )
-          console.log('STEP 1 OK', report)
+          logger.info('STEP 1 OK', report)
           return results.map(result => result.payload)
         })
         // sort results by followers
         .then(heroes => heroes.sort((a, b) => getFollowers(a) > getFollowers(b) ? -1 : 1))
         // STEP 2: write the JSON file
-        .then(heroes => writeFile(heroes))
+        .then(heroes => writeFile(heroes, options))
         .then(result => done(null, result))
         .catch(err => {
-          console.log('Unexpected error while processing results', err)
+          logger.error('Unexpected error while processing results', err)
           done(err)
         })
     })
     .catch(err => {
-      console.log('Error!', err)
+      logger.error('Error!', err)
       done(err)
     })
 }
@@ -56,6 +57,6 @@ function createReport (results, fields) {
   return results.reduce(reducer, initialReport)
 }
 
-function getFollowers(hero) {
+function getFollowers (hero) {
   return hero.followers
 }

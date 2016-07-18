@@ -8,14 +8,15 @@ const fields = {
 }
 
 module.exports = function (hero, options) {
+  const logger = options.logger
   return new Promise(function (resolve, reject) {
     const login = hero.github.login
-    if (options.debug) console.log('Processing the hero', hero.toString())
+    logger.debug('Processing the hero', hero.toString())
 
     const p1 = new Promise(function (resolve, reject) {
       github.getUserData(login, function (err, json) {
         if (err) return reject(err)
-        if (options.debug) console.log('Github API response OK', login)
+        logger.debug('Github API response OK', login)
         return resolve(json)
       })
     })
@@ -30,7 +31,7 @@ module.exports = function (hero, options) {
     ) : (
       getNpmData(hero.npm.username || login.toLowerCase())
       .then(r => {
-        if (options.debug) console.log('npm site response OK', login)
+        logger.debug('npm site response OK', login)
         return r
       })
     )
@@ -51,17 +52,17 @@ module.exports = function (hero, options) {
       ))
 
       if (nbUpdate === 0) {
-        console.log('> Database is already up-to-date', hero.toString())
+        logger.verbose('Db already up-to-date', hero.toString())
         return resolve(success(hero, false))
       }
 
-      if (options.debug) console.log('Data has to be updated', hero.toString(), nbUpdate, 'update(s)')
+      logger.debug('Data has to be updated', hero.toString(), nbUpdate, 'update(s)')
       hero.save(function (err) {
         if (err) {
-          console.error(`Unable to save the hero ${login} ${err.message}`)
+          logger.error(`Unable to save the hero ${login} ${err.message}`)
           reject(err)
         } else {
-          console.log('> Hero saved!', hero.toString())
+          logger.verbose('Hero saved!', hero.toString())
           resolve(success(hero, true))
         }
       })

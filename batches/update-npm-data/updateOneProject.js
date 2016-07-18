@@ -6,6 +6,7 @@ const { mapValues } = _
 const npm = require('../helpers/npm')
 
 function processProject (project, options, done) {
+  const { logger } = options
   options.result.processed++
 
   // Get data from npm registry
@@ -17,7 +18,7 @@ function processProject (project, options, done) {
         }
       })
     }
-    if (options.debug) console.log('STEP1: get data from npm registry')
+    logger.debug('STEP1: get data from npm registry')
     getNpmData(project, (err, json) => {
       if (err) return done(err)
       callback(null, {
@@ -33,7 +34,7 @@ function processProject (project, options, done) {
         packagequality: {}
       })
     }
-    if (options.debug) console.log('STEP2: get data from packagequality.com')
+    logger.debug('STEP2: get data from packagequality.com')
     getPackageQualityData(project, (err, result) => {
       if (err) return done(err)
       callback(null, Object.assign({}, json, {
@@ -49,7 +50,7 @@ function processProject (project, options, done) {
         npms: {}
       })
     }
-    if (options.debug) console.log('STEP3: get data npms.io')
+    logger.debug('STEP3: get data npms.io')
     npm.getNpmsData(project.npm.name, function (err, result) {
       if (err) return callback(err)
       const npmsScore = result.score
@@ -67,7 +68,7 @@ function processProject (project, options, done) {
 
   // Update the project record
   const stepDb = function (json, callback) {
-    if (options.debug) console.log('STEP4: update project record')
+    logger.debug('STEP4: update project record')
     const { npm, packagequality, npms } = json
     // don't use `Object.assign()` to create a new project,
     // it seems it does not work with Mongoose objects
@@ -77,10 +78,10 @@ function processProject (project, options, done) {
     project.save(function (err, result) {
       if (err) {
         options.result.error++
-        console.error(`Unable to save project ${project.toString()} ${err.message}`)
+        logger.error(`Unable to save project ${project.toString()} ${err.message}`)
         return callback(err)
       } else {
-        if (options.debug) console.log('Project saved!', result)
+        logger.debug('Project saved!', project.toString())
         options.result.updated++
       }
       callback(null, json) // pass json data to the next function
