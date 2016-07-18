@@ -1,20 +1,19 @@
 // Hall of Fame daily batch (see ./README.md)
 
+const Promise = require('bluebird')
+
 const processHero = require('./processHero')
 const writeFile = require('./writeFile')
 
 module.exports = function (options, done) {
   const model = options.models.Hero
-  const logger = options.logger
+  const { logger, concurrency = 10 } = options
   model.find()
     .sort({'github.followers': -1})
     .limit(options.limit)
     .then(docs => {
       logger.info(docs.length, 'heroes to process...')
-      const p = docs.map(doc => (
-        processHero(doc, options)
-      ))
-      Promise.all(p)
+      Promise.map(docs, doc => processHero(doc, options), { concurrency })
         // STEP 1: update the database with fresh data from Github API
         .then(results => {
           const report = createReport(
