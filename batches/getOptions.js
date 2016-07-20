@@ -1,8 +1,11 @@
+const mongoose = require('mongoose')
+const ObjectId = mongoose.Types.ObjectId
+
 const createLogger = require('./createLogger')
 
 // Parse command line optional arguments and return an options object
 // Optional arguments:
-// --project <id>
+// --project <github shortname>
 // --db <key>
 // --limit <number>
 // --debugmode
@@ -13,8 +16,12 @@ module.exports = function (argv) {
   const logger = createLogger({ level: loglevel })
   const options = { logger }
 
+  if (argv.id) {
+    options.project = { _id: ObjectId(argv.id) }
+    options.debug = true
+  }
   if (argv.project) {
-    options.project = {_id: argv.project}
+    options.project = { 'github.name': argv.project }
     options.debug = true
   }
   if (argv.debugmode) {

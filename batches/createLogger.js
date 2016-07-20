@@ -14,6 +14,7 @@ const options = {
 function createLogger ({ level = 'info' } = {}) {
   const logger = new winston.Logger({
     level: level,
+    json: true,
     transports: [
       new (winston.transports.Console)()
     ]

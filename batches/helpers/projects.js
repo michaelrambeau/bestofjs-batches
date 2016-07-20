@@ -24,6 +24,7 @@ var processAllProjects = function (projects, processProject, batchOptions, cb) {
 }
 
 var getProjects = function (options, cb) {
+  const logger = options.logger
   return options.Project.find(options.project)
     .populate('tags')
     .sort({
@@ -33,6 +34,7 @@ var getProjects = function (options, cb) {
       if (err) {
         throw err
       }
+      if (projects.length === 0) logger.error('No project found!', options.project)
       var limit = options.limit
       return cb(limit ? projects.slice(0, limit) : projects)
     })
@@ -50,6 +52,7 @@ function createSuperproject (project, report) {
     full_name: project.github.full_name, // 'strongloop/express' for example.
     description: project.github.description ? project.github.description : project.description,
     pushed_at: project.github.pushed_at,
+    owner_id: project.github.owner_id,
     // use .pluck to select ids only if populate() is used when making a find() request
     // tags: project.tags//_.pluck(project.tags, 'id')
     tags: _.pluck(project.tags, 'code')

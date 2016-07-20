@@ -28,7 +28,7 @@ if (argv.db) {
 
 const mongo_uri = process.env[mongo_key]
 if (!mongo_uri) throw new Error(`"${mongo_key}" env. variable is not defined.`)
-logger.info('Connecting to', mongo_uri)
+logger.info('Connecting to', mongo_uri.replace(/(mongodb:\/\/)(.+):(.+)(@.+)/, '$1***@***$4'))
 mongoose.connect(mongo_uri)
 
 // Load Mongoose models
@@ -41,7 +41,7 @@ const Hero = require('../models/Hero')
 const db = mongoose.connection
 db.on('error', (err) => logger.error(`Db connection error ${err.toString()}`))
 db.once('open', function () {
-  logger.info(`Db connection open, start the batch "${key}"`)
+  logger.warn(`Db connection open, start the batch "${key}"`)
   const models = {Project, Snapshot, Tag, Hero}
   if (options.readonly) {
     setReadonly(Project)
@@ -124,5 +124,5 @@ function end (err, result) {
   logger.profile('batch')
   mongoose.disconnect()
   if (err) return logger.error('--- THE END with an error ---', err)
-  logger.info('--- END ---', result)
+  logger.warn('--- END ---', result)
 }

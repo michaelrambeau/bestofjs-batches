@@ -30,7 +30,8 @@ fields = {
     stargazers_count: Number,
     pushed_at: Date,
     branch: String,
-    packageJson: Boolean
+    packageJson: Boolean,
+    owner_id: Number
   },
   npm: {
     name: String,

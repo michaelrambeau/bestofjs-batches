@@ -22,7 +22,7 @@ function processProject (project, options, done) {
 
   // Update the project record
   const f2 = function (json, callback) {
-    logger.debug('STEP2: update project record from Github data')
+    logger.debug('STEP2: update project record from Github data', json)
     project.github = json
     project.save(function (err, result) {
       if (err) {
@@ -65,7 +65,7 @@ function getGithubData (project, cb) {
 }
 
 function parseGithubData (json) {
-  const result = _.pick(json, [
+  const result1 = _.pick(json, [
     'name',
     'full_name',
     'description',
@@ -73,7 +73,10 @@ function parseGithubData (json) {
     'stargazers_count',
     'pushed_at'
   ])
-  return result
+  const result2 = Object.assign({}, result1, {
+    owner_id: _.get(json, 'owner.id')
+  })
+  return result2
 }
 
 function takeSnapshotIfNeeded (project, stars, options, cb) {
