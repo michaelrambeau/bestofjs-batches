@@ -70,6 +70,10 @@ function createSuperproject (project, report) {
     data.score = project.npms.score.final || 0
   }
 
+  if (project.svglogo) {
+    data.svglogo = project.svglogo
+  }
+
   return data
 }
 

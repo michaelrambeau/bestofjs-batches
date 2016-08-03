@@ -50,7 +50,8 @@ fields = {
       },
       final: Number
     }
-  }
+  },
+  svglogo: String
 }
 
 schema = new mongoose.Schema(fields, {
