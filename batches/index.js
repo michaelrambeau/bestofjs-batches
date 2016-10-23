@@ -1,6 +1,8 @@
+// Read secrets from `.env` file in local development mode
+require('dotenv').config({ silent: true })
+
 const mongoose = require('mongoose')
 const minimist = require('minimist')
-require('dotenv').load()
 const getOptions = require('./getOptions')
 mongoose.Promise = require('bluebird')
 
