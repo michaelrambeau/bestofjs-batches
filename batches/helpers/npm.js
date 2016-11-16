@@ -40,11 +40,13 @@ function getPackageQualityData (packageName, cb) {
 }
 
 function getNpmsData (packageName, cb) {
-  const url = `https://api.npms.io/module/${packageName}`
+  // Update to npms.io API v2 in Nov, 2016 (see https://github.com/npms-io/npms-api/issues/56)
+  // "scope package" name needs to encoded: `@blueprintjs/core` => `%40blueprintjs%2Fcore`
+  const url = `https://api.npms.io/v2/package/${encodeURIComponent(packageName)}`
   fetch(url)
     .then(r => r.json())
     .then(json => cb(null, json))
-    .catch(err => cb(new Error(`Invalid response from ${url}`)))
+    .catch(() => cb(new Error(`Invalid response from ${url}`)))
 }
 
 function formatDependencies (dependencies) {
