@@ -74,7 +74,8 @@ function parseGithubData (json) {
     'pushed_at'
   ])
   const result2 = Object.assign({}, result1, {
-    owner_id: _.get(json, 'owner.id')
+    owner_id: _.get(json, 'owner.id'),
+    branch: _.get(json, 'default_branch')
   })
   return result2
 }

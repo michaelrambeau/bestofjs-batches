@@ -1,29 +1,28 @@
-var _ = require('lodash')
-var async = require('async')
+const _ = require('lodash')
+const async = require('async')
 
 // INPUT:
 // projects: an array of projects
 // processProject: function to be applied on each project
 // OUTPUT callback function
-var processAllProjects = function (projects, processProject, batchOptions, cb) {
-  var defaultOptions, limit, options, t0
-  t0 = new Date()
-  defaultOptions = {
+function processAllProjects (projects, processProject, batchOptions, cb) {
+  const t0 = new Date()
+  const defaultOptions = {
     parallelLimit: 20
   }
-  options = _.extend(defaultOptions, batchOptions)
+  const options = _.extend(defaultOptions, batchOptions)
   const logger = options.logger
-  limit = options.parallelLimit
+  const limit = options.parallelLimit
   logger.info(projects.length, 'project(s) to process... async limit=', limit)
   async.eachLimit(projects, limit, processProject, function (err) {
     if (err) logger.error('Error', err)
-    var duration = (new Date() - t0) / 1000
+    const duration = (new Date() - t0) / 1000
     logger.info('End of the project loop', duration)
     return cb()
   })
 }
 
-var getProjects = function (options, cb) {
+function getProjects (options, cb) {
   const logger = options.logger
   return options.Project.find(options.project)
     .populate('tags')
@@ -56,6 +55,12 @@ function createSuperproject (project, report) {
     // use .pluck to select ids only if populate() is used when making a find() request
     // tags: project.tags//_.pluck(project.tags, 'id')
     tags: _.pluck(project.tags, 'code')
+  }
+
+  // Add Github default branch only if it's different from `master`
+  const branch = project.github.branch
+  if (branch && branch !== 'master') {
+    data.branch = branch
   }
 
   // Add npm data if available
