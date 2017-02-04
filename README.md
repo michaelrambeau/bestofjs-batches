@@ -1,4 +1,4 @@
-# bestofjs-batches v0.3
+# bestofjs-batches v2.0
 
 Scheduled tasks that generate static data used by bestof.js.org web application.
 

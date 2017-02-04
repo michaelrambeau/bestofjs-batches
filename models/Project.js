@@ -51,7 +51,10 @@ fields = {
       final: Number
     }
   },
-  svglogo: String
+  svglogo: String,
+  colors: {
+    vibrant: String
+  }
 }
 
 schema = new mongoose.Schema(fields, {

@@ -46,7 +46,8 @@ function createSuperproject (project, report) {
     name: project.name, // Project name entered in the application (not the one from Github)
     stars: report.stars,
     deltas: report.deltas.slice(0, 7),
-    trends: report.trends,
+    // trends: report.trends,
+    monthly: report.monthlyTrends,
     url: project.github.homepage ? project.github.homepage : '',
     full_name: project.github.full_name, // 'strongloop/express' for example.
     description: project.github.description ? project.github.description : project.description,
@@ -77,6 +78,12 @@ function createSuperproject (project, report) {
 
   if (project.svglogo) {
     data.svglogo = project.svglogo
+  }
+  if (project.svglogo) {
+    data.svglogo = project.svglogo
+  }
+  if (project.colors && project.colors.vibrant) {
+    data.color = project.colors.vibrant.replace(/#/, '')
   }
 
   return data
