@@ -20,6 +20,18 @@ function processProject (project, options, done) {
     })
   }
 
+  const f1bis = function (json, callback) {
+    const full_name = json.full_name
+    logger.debug('STEP1 bis: Get topics by scrapping Github web page', { full_name })
+    github.getTopics(full_name)
+      .then(result => {
+        const { topics } = result
+        const nextData = Object.assign({}, json, { topics })
+        callback(null, nextData)
+      })
+      .catch(e => callback(e))
+  }
+
   // Update the project record
   const f2 = function (json, callback) {
     logger.debug('STEP2: update project record from Github data', json)
@@ -51,7 +63,7 @@ function processProject (project, options, done) {
     })
   }
 
-  waterfall([f1, f2, f3], done)
+  waterfall([f1, f1bis, f2, f3], done)
 }
 
 function getGithubData (project, cb) {

@@ -42,19 +42,18 @@ function getProjects (options, cb) {
 // Return the JSON object to save later in the filesystem
 function createSuperproject (project, report) {
   var data = {
-    _id: project._id,
     name: project.name, // Project name entered in the application (not the one from Github)
     stars: report.stars,
     deltas: report.deltas.slice(0, 7),
-    // trends: report.trends,
     monthly: report.monthlyTrends,
     url: project.github.homepage ? project.github.homepage : '',
     full_name: project.github.full_name, // 'strongloop/express' for example.
     description: project.github.description ? project.github.description : project.description,
     pushed_at: project.github.pushed_at,
     owner_id: project.github.owner_id,
-    // use .pluck to select ids only if populate() is used when making a find() request
-    // tags: project.tags//_.pluck(project.tags, 'id')
+    // The Github topics are coming soon!
+    // topics: project.github.topics
+    //   .filter(topic => topic !== 'javascript'),
     tags: _.pluck(project.tags, 'code')
   }
 

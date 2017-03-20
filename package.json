@@ -1,6 +1,6 @@
 {
   "name": "bestofjs-batches",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "bestof.js.org batches (scheduled tasks)",
   "main": "index.js",
   "scripts": {
@@ -12,6 +12,7 @@
     "deploy:dev": "firebase deploy --project dev",
     "test": "tape tests/**/*-spec.js",
     "test-debug": "tape tests/trends-spec.js",
+    "test-topics": "node tests/get-topics.js",
     "lint": "standard ./batches/hof/index.js"
   },
   "author": "Michael Rambeau",

@@ -1,5 +1,6 @@
 const request = require('request')
 const fetch = require('node-fetch')
+const scrapeIt = require('scrape-it')
 
 function githubRequest (url, cb) {
   const fullUrl = `https://api.github.com/${url}?client_id=${process.env.GITHUB_CLIENT_ID}&client_secret=${process.env.GITHUB_CLIENT_SECRET}`
@@ -24,7 +25,7 @@ function githubRequest (url, cb) {
   })
 }
 
-const github = {
+const githubHelpers = {
   getRepoData: function (project, cb) {
     const fullname = project.github && project.github.full_name ? (
       project.github.full_name
@@ -42,7 +43,14 @@ const github = {
       .then(r => r.json())
       .then(json => cb(null, json))
       .catch(err => cb(err))
+  },
+  getTopics: function (full_name) {
+    return scrapeIt(`https://github.com/${full_name}`, {
+      topics: {
+        listItem: '#topics-list-container a'
+      }
+    })
   }
 }
 
-module.exports = github
+module.exports = githubHelpers
