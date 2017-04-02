@@ -20,7 +20,9 @@ function processProject (project, options, done) {
     }
     logger.debug('STEP1: get data from npm registry')
     getNpmData(project, (err, json) => {
-      if (err) return done(err)
+      // Instead of `return done(err)` we return the normal callback to go to the next step
+      // because we cannot get data from nom regisry for a some projects (e.g. `ngx-datatable`)
+      if (err) return callback(null, { npm: null })
       callback(null, {
         npm: json
       })
@@ -72,7 +74,7 @@ function processProject (project, options, done) {
     const { npm, packagequality, npms } = json
     // don't use `Object.assign()` to create a new project,
     // it seems it does not work with Mongoose objects
-    project.npm = npm
+    if (npm) project.npm = npm // Update `npm` object only if we get data from the STEP1
     project.npms = npms
     project.packagequality = packagequality
     project.save(function (err, result) {
@@ -118,6 +120,7 @@ function getPackageQualityData (project, cb) {
 }
 
 // Format score numbers from packagequality.com and npms.im into percents, with no decimals
-const formatScore = (score) => Math.round(score * 100)
+// We may have no score to format (`ngx-datatable` cannot be found on packagequality.com)
+const formatScore = (score) => score ? Math.round(score * 100) : 0
 
 module.exports = processProject
