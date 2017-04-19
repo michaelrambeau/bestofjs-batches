@@ -13,6 +13,7 @@
     "test": "tape tests/**/*-spec.js",
     "test-debug": "tape tests/trends-spec.js",
     "test-topics": "node tests/get-topics.js",
+    "test-hof": "node tests/hof-spec.js",
     "lint": "standard ./batches/hof/index.js"
   },
   "author": "Michael Rambeau",

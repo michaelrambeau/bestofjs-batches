@@ -4,10 +4,9 @@ const fields = {
   createdAt: {
     type: Date
   },
-  projects: {
-    type: [mongoose.Schema.ObjectId],
-    ref: 'Project'
-  },
+  projects: [{
+    type: mongoose.Schema.ObjectId, ref: 'Project'
+  }],
   short_bio: String,
   github: {
     login: String,
@@ -27,7 +26,7 @@ const schema = new mongoose.Schema(fields, {
 })
 
 schema.methods.toString = function () {
-  return `${this.github.login} (${this.github.name}) ${this.github.followers} followers, ${this.npm.count} modules`
+  return `${this.github.login} (${this.github.name}) ${this.github.followers} followers, ${this.npm.count} modules, ${this.projects} projects`
 }
 
 const model = mongoose.model('Hero', schema)

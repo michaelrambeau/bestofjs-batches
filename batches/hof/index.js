@@ -4,11 +4,22 @@ const Promise = require('bluebird')
 
 const processHero = require('./processHero')
 const writeFile = require('./writeFile')
+const slugify = require('../helpers/slugify')
+
+// Replace an array of project db ids by their slugs
+function convertHeroProjects (hero) {
+  return Object.assign({}, hero, {
+    projects: hero.projects.map(
+      project => slugify(project.github.name)
+    )
+  })
+}
 
 module.exports = function (options, done) {
   const model = options.models.Hero
   const { logger, concurrency = 10 } = options
   model.find()
+    .populate({ path: 'projects', select: 'github.name' })
     .sort({'github.followers': -1})
     .limit(options.limit)
     .then(docs => {
@@ -25,6 +36,10 @@ module.exports = function (options, done) {
         })
         // sort results by followers
         .then(heroes => heroes.sort((a, b) => getFollowers(a) > getFollowers(b) ? -1 : 1))
+        .then(heroes => heroes.map(hero => convertHeroProjects(hero)))
+        // .then(heroes => heroes.map(hero => Object.assign({}, hero, {
+        //   projects: populateProjects(hero.projects)
+        // })))
         // STEP 2: write the JSON file
         .then(heroes => writeFile(heroes, options))
         .then(result => done(null, result))
