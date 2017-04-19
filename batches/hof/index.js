@@ -10,7 +10,7 @@ const slugify = require('../helpers/slugify')
 function convertHeroProjects (hero) {
   return Object.assign({}, hero, {
     projects: hero.projects.map(
-      project => slugify(project.github.name)
+      project => slugify(project.name)
     )
   })
 }
@@ -19,7 +19,7 @@ module.exports = function (options, done) {
   const model = options.models.Hero
   const { logger, concurrency = 10 } = options
   model.find()
-    .populate({ path: 'projects', select: 'github.name' })
+    .populate({ path: 'projects', select: 'name' })
     .sort({'github.followers': -1})
     .limit(options.limit)
     .then(docs => {
