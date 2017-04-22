@@ -75,14 +75,9 @@ function createSuperproject (project, report) {
     data.score = project.npms.score.final || 0
   }
 
-  if (project.svglogo) {
-    data.svglogo = project.svglogo
-  }
-  if (project.svglogo) {
-    data.svglogo = project.svglogo
-  }
-  if (project.colors && project.colors.vibrant) {
-    data.color = project.colors.vibrant.replace(/#/, '')
+  // Project custom URL (will be displayed instead of Github owner's avatar)
+  if (project.icon && project.icon.url) {
+    data.icon = project.icon.url
   }
 
   return data

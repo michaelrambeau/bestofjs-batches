@@ -1,6 +1,6 @@
 {
   "name": "bestofjs-batches",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "bestof.js.org batches (scheduled tasks)",
   "main": "index.js",
   "scripts": {

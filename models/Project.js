@@ -52,7 +52,9 @@ fields = {
       final: Number
     }
   },
-  svglogo: String,
+  icon: {
+    url: String
+  },
   colors: {
     vibrant: String
   }
