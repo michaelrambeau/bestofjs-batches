@@ -20,12 +20,12 @@ const start = () => {
   console.log('Connecting the database...')
   var db = mongoose.connection
   db.on('error', console.error.bind(console, 'connection error:'))
-  db.once('open', function () {
+  db.once('open', function() {
     console.log('Db connection opened!')
-    options.models = {Project, Snapshot, Tag}
+    options.models = { Project, Snapshot, Tag }
 
     // Launch the tests!
-    parallel([test1, test2, test3], function (err, result) {
+    parallel([test1, test2, test3], function(err, result) {
       if (err) console.log('Error caught in the main callback', err)
       mongoose.disconnect()
       console.log('--- END, db connection closed ----')
@@ -37,7 +37,7 @@ const start = () => {
 test('Sample tests', t => {
   mongoose.connect(process.env.MONGO_URI)
   const db = mongoose.connection
-  options.models = {Project, Snapshot, Tag}
+  options.models = { Project, Snapshot, Tag }
   const end = () => {
     console.log('Closing the connection.')
     mongoose.disconnect()
@@ -45,21 +45,20 @@ test('Sample tests', t => {
   }
   db.once('open', () => {
     t.pass('Db connection OK')
-    const tests = [
-      test1(t),
-      test2(t),
-      test3(t)
-    ]
+    const tests = [test1(t), test2(t), test3(t)]
     Promise.all(tests).then(() => end())
   })
 })
 
-function test1 (assert) {
-  return new Promise((resolve) => {
+function test1(assert) {
+  return new Promise(resolve => {
     const project = {
       _id: '55ab9d0f8f937d03008d41c4'
     }
-    getLastSnapshot(project, {Snapshot: options.models.Snapshot}, function (err, result) {
+    getLastSnapshot(project, { Snapshot: options.models.Snapshot }, function(
+      err,
+      result
+    ) {
       console.log('res', result)
       if (err) {
         assert.fail('Error calling getLastSnapshot()', err)
@@ -67,7 +66,10 @@ function test1 (assert) {
       }
       assert.ok(result, 'Should return a result')
       if (result) {
-        assert.ok(!isNaN(result.stars), 'Snapshot record should have a `stars` property')
+        assert.ok(
+          !isNaN(result.stars),
+          'Snapshot record should have a `stars` property'
+        )
       }
       console.log('isTodaySnapshot?', isTodaySnapshot(result))
       console.log('date only=', dateOnly(new Date('2015-09-25T21:10:01.436Z')))
@@ -76,7 +78,7 @@ function test1 (assert) {
   })
 }
 
-function test2 (assert) {
+function test2(assert) {
   console.log('test2')
   return new Promise(resolve => {
     const project = {
@@ -85,26 +87,32 @@ function test2 (assert) {
     }
     const options = {
       Snapshot: {
-        create: function (data, cb) {
+        create: function(data, cb) {
           console.log('Snapshot created! [MOCK]', data)
           cb(data)
         }
       }
     }
-    getStars(project, options, function (err, result) {
+    getStars(project, options, function(err, result) {
       if (err) console.log('An error occurred!', err)
       assert.ok(result, 'getStars() should return something')
       if (result) {
-        assert.ok(!isNaN(result.stars), 'getStars() should return the number of stars')
-        assert.ok(result.stars > 1000, 'getStars() should return a star count bigger than 1000')
+        assert.ok(
+          !isNaN(result.stars),
+          'getStars() should return the number of stars'
+        )
+        assert.ok(
+          result.stars > 1000,
+          'getStars() should return a star count bigger than 1000'
+        )
       }
       return resolve()
     })
   })
 }
 
-function test3 (assert) {
-  console.log('test3');
+function test3(assert) {
+  console.log('test3')
   return new Promise(resolve => {
     const project = {
       _id: '55ab9d0f8f937d03008d41c4',
@@ -112,13 +120,13 @@ function test3 (assert) {
     }
     const options = {
       Snapshot: {
-        create: function (data, cb) {
+        create: function(data, cb) {
           console.log('Snapshot created! [MOCK]', data)
           cb(null, data)
         }
       }
     }
-    createSnapshot(project, options, function (err, result) {
+    createSnapshot(project, options, function(err, result) {
       if (err) console.log('An error occurred!', err)
       assert.ok(result, 'createSnapshot() should return something')
       if (result) {

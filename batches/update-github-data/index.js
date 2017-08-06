@@ -16,7 +16,7 @@ var helpers = require('../helpers/projects')
 var processAllProjects = helpers.processAllProjects
 var getProjects = helpers.getProjects
 
-var start = function (batchOptions, done) {
+var start = function(batchOptions, done) {
   var defaultOptions = {
     result: {
       processed: 0,
@@ -31,22 +31,24 @@ var start = function (batchOptions, done) {
   logger.info('Start `update-github-data` batch', options.limit)
 
   // STEP 1: grab all projects, exluding "deprecated" projects
-  var f1 = function (callback) {
+  var f1 = function(callback) {
     var defaultSearchOptions = {
-      deprecated: {$ne: true}
+      deprecated: { $ne: true }
     }
     var searchOptions = _.defaults(defaultSearchOptions, options.project)
-    getProjects({
-      Project: options.models.Project,
-      project: searchOptions,
-      limit: options.limit,
-      logger
-    },
-      (projects) => callback(null, projects))
+    getProjects(
+      {
+        Project: options.models.Project,
+        project: searchOptions,
+        limit: options.limit,
+        logger
+      },
+      projects => callback(null, projects)
+    )
   }
 
-  const processProject = function (project, cb) {
-    updateProject(project, options, function (err) {
+  const processProject = function(project, cb) {
+    updateProject(project, options, function(err) {
       if (err) {
         logger.error(`Unable to process ${project.toString()}: ${err.message}`)
         options.result.error++
@@ -56,12 +58,10 @@ var start = function (batchOptions, done) {
   }
 
   // STEP 2: take the snapshot for every project (if it has been already taken today)
-  var f2 = function (projects, callback) {
-    processAllProjects(
-      projects,
-      processProject,
-      { logger },
-      () => callback(null, options.result))
+  var f2 = function(projects, callback) {
+    processAllProjects(projects, processProject, { logger }, () =>
+      callback(null, options.result)
+    )
   }
 
   return waterfall([f1, f2], done)

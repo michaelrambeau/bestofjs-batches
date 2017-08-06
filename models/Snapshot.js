@@ -1,7 +1,6 @@
+var fields, model, mongoose, schema
 
-var fields, model, mongoose, schema;
-
-mongoose = require('mongoose');
+mongoose = require('mongoose')
 
 fields = {
   stars: Number,
@@ -12,12 +11,12 @@ fields = {
   createdAt: {
     type: Date
   }
-};
+}
 
 schema = new mongoose.Schema(fields, {
   collection: 'snapshot'
-});
+})
 
-model = mongoose.model('Snapshot', schema);
+model = mongoose.model('Snapshot', schema)
 
-module.exports = model;
+module.exports = model

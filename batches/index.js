@@ -30,7 +30,10 @@ if (argv.db) {
 
 const mongo_uri = process.env[mongo_key]
 if (!mongo_uri) throw new Error(`"${mongo_key}" env. variable is not defined.`)
-logger.info('Connecting to', mongo_uri.replace(/(mongodb:\/\/)(.+):(.+)(@.+)/, '$1***@***$4'))
+logger.info(
+  'Connecting to',
+  mongo_uri.replace(/(mongodb:\/\/)(.+):(.+)(@.+)/, '$1***@***$4')
+)
 mongoose.connect(mongo_uri)
 
 // Load Mongoose models
@@ -41,10 +44,10 @@ const Hero = require('../models/Hero')
 
 // Connect to the database and launch the batch when it is OK.
 const db = mongoose.connection
-db.on('error', (err) => logger.error(`Db connection error ${err.toString()}`))
-db.once('open', function () {
+db.on('error', err => logger.error(`Db connection error ${err.toString()}`))
+db.once('open', function() {
   logger.warn(`Db connection open, start the batch "${key}"`)
-  const models = {Project, Snapshot, Tag, Hero}
+  const models = { Project, Snapshot, Tag, Hero }
   if (options.readonly) {
     setReadonly(Project)
     setReadonly(Snapshot)
@@ -53,76 +56,78 @@ db.once('open', function () {
   start(key, options)
 })
 
-function start (key, options) {
+function start(key, options) {
   logger.profile('batch')
   switch (key) {
     case 'test':
-      batchTest(options, function (err, result) {
+      batchTest(options, function(err, result) {
         end(err, result)
       })
       break
     case 'github':
       // Daily batch part 1: update github data and create snapshots
-      updateGithubData(options, function (err, result) {
+      updateGithubData(options, function(err, result) {
         end(err, result)
       })
       break
     case 'hof':
-      updateHoF(options, function (err, result) {
+      updateHoF(options, function(err, result) {
         end(err, result)
       })
       break
     case 'build':
       // Batch batch part 2: build static data
-      buildData(options, function (err, result) {
+      buildData(options, function(err, result) {
         end(err, result)
       })
       break
     case 'daily':
       // The daily batch
-      updateGithubData(options, function (err, result) {
+      updateGithubData(options, function(err, result) {
         if (err) return logger.error('Unexpected error during part 1', err)
         logger.info(result)
-        buildData(options, function (err, result) {
+        buildData(options, function(err, result) {
           if (err) return logger.error('Unexpected error during part 2', err)
           end(err, result)
         })
       })
       break
     case 'migrate-tags':
-      migrateTags(options, function (err, result) {
+      migrateTags(options, function(err, result) {
         end(err, result)
       })
       break
     case 'init-npm':
-      initNpm(options, function (err, result) {
+      initNpm(options, function(err, result) {
         end(err, result)
       })
       break
     case 'npm':
-      updateNpmData(options, function (err, result) {
+      updateNpmData(options, function(err, result) {
         end(err, result)
       })
       break
     default:
-      logger.error('Specify a valid batch key as the 1st command line argument.')
+      logger.error(
+        'Specify a valid batch key as the 1st command line argument.'
+      )
       end()
   }
 }
 
 // Disable model write instructions.
-function setReadonly (Model) {
-  Model.schema.pre('save', function (next) {
+function setReadonly(Model) {
+  Model.schema.pre('save', function(next) {
     const err = new Error('save() method disabled in READONLY mode')
     next(err)
   })
-  Model.schema.pre('create', function (next) {
+  Model.schema.pre('create', function(next) {
     const err = new Error('create() method disabled in READONLY mode')
     next(err)
   })
 }
 
-function end (err, result) {
+function end(err, result) {
   logger.profile('batch')
   mongoose.disconnect()
   if (err) return logger.error('--- THE END with an error ---', err)

@@ -11,13 +11,11 @@ const options = {
   level: 'warn'
 }
 
-function createLogger ({ level = 'info' } = {}) {
+function createLogger({ level = 'info' } = {}) {
   const logger = new winston.Logger({
     level: level,
     json: true,
-    transports: [
-      new (winston.transports.Console)()
-    ]
+    transports: [new winston.transports.Console()]
   })
   if (token) {
     logger.add(winston.transports.Loggly, options)

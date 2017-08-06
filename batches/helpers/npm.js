@@ -1,7 +1,7 @@
 const request = require('request')
 const fetch = require('node-fetch')
 
-function getNpmRegistryData (packageName, cb) {
+function getNpmRegistryData(packageName, cb) {
   const endPoint = 'http://registry.npmjs.org'
   const getUrl = packageName => {
     const { name, scope } = parsePackageName(packageName)
@@ -15,13 +15,17 @@ function getNpmRegistryData (packageName, cb) {
     url: getUrl(packageName)
   }
   // console.log('Checking npm registry', packageName, options)
-  return request.get(options, function (error, response, body) {
+  return request.get(options, function(error, response, body) {
     if (!error && response.statusCode === 200) {
       try {
         var json = JSON.parse(body)
         return cb(null, json)
       } catch (err) {
-        return cb(new Error(`Unable to parse JSON response from npm registry for package ${packageName} ${err.toString()}`))
+        return cb(
+          new Error(
+            `Unable to parse JSON response from npm registry for package ${packageName} ${err.toString()}`
+          )
+        )
       }
     } else {
       return cb(new Error(`Invalid response from npm registry ${packageName}`))
@@ -29,7 +33,7 @@ function getNpmRegistryData (packageName, cb) {
   })
 }
 
-function getPackageQualityData (packageName, cb) {
+function getPackageQualityData(packageName, cb) {
   const { name, scope } = parsePackageName(packageName)
   var url = `http://packagequality.com/package/${name}`
   if (scope) url = `${url}?scope=${scope}`
@@ -39,21 +43,23 @@ function getPackageQualityData (packageName, cb) {
     .catch(err => cb(err))
 }
 
-function getNpmsData (packageName, cb) {
+function getNpmsData(packageName, cb) {
   // Update to npms.io API v2 in Nov, 2016 (see https://github.com/npms-io/npms-api/issues/56)
   // "scope package" name needs to encoded: `@blueprintjs/core` => `%40blueprintjs%2Fcore`
-  const url = `https://api.npms.io/v2/package/${encodeURIComponent(packageName)}`
+  const url = `https://api.npms.io/v2/package/${encodeURIComponent(
+    packageName
+  )}`
   fetch(url)
     .then(r => r.json())
     .then(json => cb(null, json))
     .catch(() => cb(new Error(`Invalid response from ${url}`)))
 }
 
-function formatDependencies (dependencies) {
+function formatDependencies(dependencies) {
   return dependencies ? Object.keys(dependencies) : []
 }
 
-function parsePackageName (packageName) {
+function parsePackageName(packageName) {
   var name = packageName
   var scope = ''
   const array = /^(@.+)\/(.+)/.exec(packageName)

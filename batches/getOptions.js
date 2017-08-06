@@ -11,7 +11,7 @@ const createLogger = require('./createLogger')
 // --debugmode
 // --readonly
 // --loglevel
-module.exports = function (argv) {
+module.exports = function(argv) {
   const loglevel = argv.loglevel
   const logger = createLogger({ level: loglevel })
   const options = { logger }

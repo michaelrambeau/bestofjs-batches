@@ -2,13 +2,13 @@ const moment = require('moment')
 
 const days = [1, 7, 30, 90]
 
-function createTrends (snapshots) {
+function createTrends(snapshots) {
   const points = createAllPoints(snapshots)
   const trends = pointsToTrends(points)
   return trends
 }
 
-function pointsToTrends (points) {
+function pointsToTrends(points) {
   if (points.length === 0) return []
   const stars0 = points[0].stars
   var timesIndex = 0
@@ -22,22 +22,22 @@ function pointsToTrends (points) {
   return trends
 }
 
-function createDailyDeltas (snapshots) {
+function createDailyDeltas(snapshots) {
   const points = createAllPoints(snapshots)
   const deltas = pointsToDeltas(points)
   return deltas
 }
 
-function createAllPoints (snapshots) {
-  const points = snapshots.map(function (doc) {
+function createAllPoints(snapshots) {
+  const points = snapshots.map(function(doc) {
     return createPoint(doc)
   })
-  return points.sort(function (a, b) {
+  return points.sort(function(a, b) {
     return a.t - b.t
   })
 }
 
-function createPoint (snapshot) {
+function createPoint(snapshot) {
   var point, snapshotDate
   snapshotDate = new Date(snapshot.createdAt)
   point = {
@@ -47,13 +47,13 @@ function createPoint (snapshot) {
   return point
 }
 
-function dateOnly (d) {
+function dateOnly(d) {
   d.setHours(d.getHours() + 9, 0, 0, 0)
   d.setUTCHours(0, 0, 0, 0)
   return d
 }
 
-function getTimeValue (date) {
+function getTimeValue(date) {
   var d, delta, moment0, moment1, today
   d = dateOnly(date)
   today = dateOnly(new Date())
@@ -63,10 +63,10 @@ function getTimeValue (date) {
   return delta
 }
 
-function pointsToDeltas (points) {
+function pointsToDeltas(points) {
   var deltas, reducer
   deltas = []
-  reducer = function (pointA, pointB) {
+  reducer = function(pointA, pointB) {
     if (pointA.t > -1) {
       deltas.push(pointA.stars - pointB.stars)
     }

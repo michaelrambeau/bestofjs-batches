@@ -1,10 +1,10 @@
 const scrapeIt = require('scrape-it')
 
-module.exports = function getNpmData (username) {
+module.exports = function getNpmData(username) {
   return scrapeIt(`https://www.npmjs.com/~${username}`, {
     username: {
       selector: 'h1',
-      convert: x => x === '?' ? '' : x
+      convert: x => (x === '?' ? '' : x)
     },
     count: {
       selector: '#packages',
@@ -13,7 +13,7 @@ module.exports = function getNpmData (username) {
   })
 }
 
-function getCount (text) {
+function getCount(text) {
   const a = /^(\d+) Packages by/.exec(text)
   if (!a) return 0
   const count = a[1]

@@ -16,7 +16,7 @@ const helpers = require('../helpers/projects')
 const processAllProjects = helpers.processAllProjects
 const getProjects = helpers.getProjects
 
-const start = function (batchOptions, done) {
+const start = function(batchOptions, done) {
   const defaultOptions = {
     result: {
       processed: 0,
@@ -30,22 +30,24 @@ const start = function (batchOptions, done) {
   logger.info('> Start `update-npm-data` batch')
 
   // STEP 1: grab all projects, exluding "deprecated" projects
-  const f1 = function (callback) {
+  const f1 = function(callback) {
     const defaultSearchOptions = {
-      deprecated: {$ne: true},
-      'npm.name': {$ne: ''}
+      deprecated: { $ne: true },
+      'npm.name': { $ne: '' }
     }
     const searchOptions = _.defaults(defaultSearchOptions, options.project)
-    getProjects({
-      Project: options.models.Project,
-      project: searchOptions,
-      limit: options.limit
-    },
-      (projects) => callback(null, projects))
+    getProjects(
+      {
+        Project: options.models.Project,
+        project: searchOptions,
+        limit: options.limit
+      },
+      projects => callback(null, projects)
+    )
   }
 
-  const processProject = function (project, cb) {
-    updateProject(project, options, function (err) {
+  const processProject = function(project, cb) {
+    updateProject(project, options, function(err) {
       if (err) {
         logger.error(`Unable to process ${project.toString()}: ${err.message}`)
         options.result.error++
@@ -55,12 +57,10 @@ const start = function (batchOptions, done) {
   }
 
   // STEP 2: take the snapshot for every project (if it has been already taken today)
-  const f2 = function (projects, callback) {
-    processAllProjects(
-      projects,
-      processProject,
-      { logger },
-      () => callback(null, options.result))
+  const f2 = function(projects, callback) {
+    processAllProjects(projects, processProject, { logger }, () =>
+      callback(null, options.result)
+    )
   }
 
   return waterfall([f1, f2], done)

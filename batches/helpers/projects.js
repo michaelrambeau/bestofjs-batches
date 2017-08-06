@@ -5,7 +5,7 @@ const async = require('async')
 // projects: an array of projects
 // processProject: function to be applied on each project
 // OUTPUT callback function
-function processAllProjects (projects, processProject, batchOptions, cb) {
+function processAllProjects(projects, processProject, batchOptions, cb) {
   const t0 = new Date()
   const defaultOptions = {
     parallelLimit: 20
@@ -14,7 +14,7 @@ function processAllProjects (projects, processProject, batchOptions, cb) {
   const logger = options.logger
   const limit = options.parallelLimit
   logger.info(projects.length, 'project(s) to process... async limit=', limit)
-  async.eachLimit(projects, limit, processProject, function (err) {
+  async.eachLimit(projects, limit, processProject, function(err) {
     if (err) logger.error('Error', err)
     const duration = (new Date() - t0) / 1000
     logger.info('End of the project loop', duration)
@@ -22,25 +22,27 @@ function processAllProjects (projects, processProject, batchOptions, cb) {
   })
 }
 
-function getProjects (options, cb) {
+function getProjects(options, cb) {
   const logger = options.logger
-  return options.Project.find(options.project)
+  return options.Project
+    .find(options.project)
     .populate('tags')
     .sort({
       createdAt: 1
     })
-    .exec(function (err, projects) {
+    .exec(function(err, projects) {
       if (err) {
         throw err
       }
-      if (projects.length === 0) logger.error('No project found!', options.project)
+      if (projects.length === 0)
+        logger.error('No project found!', options.project)
       var limit = options.limit
       return cb(limit ? projects.slice(0, limit) : projects)
     })
 }
 
 // Return the JSON object to save later in the filesystem
-function createSuperproject (project, report) {
+function createSuperproject(project, report) {
   var data = {
     name: project.name, // Project name entered in the application (not the one from Github)
     stars: report.stars,
@@ -48,7 +50,9 @@ function createSuperproject (project, report) {
     monthly: report.monthlyTrends,
     url: project.github.homepage ? project.github.homepage : '',
     full_name: project.github.full_name, // 'strongloop/express' for example.
-    description: project.github.description ? project.github.description : project.description,
+    description: project.github.description
+      ? project.github.description
+      : project.description,
     pushed_at: project.github.pushed_at,
     owner_id: project.github.owner_id,
     // The Github topics are coming soon!

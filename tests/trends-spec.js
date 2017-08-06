@@ -47,7 +47,7 @@ data.forEach(item => {
   testSample(item)
 })
 
-function testSample (sample) {
+function testSample(sample) {
   test('Checking trends functions', t => {
     const stars = sample.input
     const points = stars.map((s, i) => ({

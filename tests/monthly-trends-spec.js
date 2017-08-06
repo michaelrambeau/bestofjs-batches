@@ -9,7 +9,7 @@ const snapshots = times(400).map(i => ({
   stars: 10000 - i * 10
 }))
 
-function testSample (snapshots) {
+function testSample(snapshots) {
   test('Checking monthly trends functions', t => {
     const trends = getTrends(snapshots)
     console.log(trends)

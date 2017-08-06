@@ -64,7 +64,7 @@ schema = new mongoose.Schema(fields, {
   collection: 'project'
 })
 
-schema.methods.toString = function () {
+schema.methods.toString = function() {
   return `Project ${this.name} ${this._id}`
 }
 

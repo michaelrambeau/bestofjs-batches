@@ -12,7 +12,7 @@ var getSnapshotData = require('./get-snapshot-data')
 var getTags = require('./get-tags')
 var write = require('./save-json')
 
-var start = function (batchOptions, done) {
+var start = function(batchOptions, done) {
   var defaultOptions = null
   var options = _.defaults(batchOptions, defaultOptions)
   const { logger } = options
@@ -23,31 +23,33 @@ var start = function (batchOptions, done) {
   }
 
   // STEP 1: grab all projects, ignoring "deprecated" and "disabled" projects
-  var f1 = function (callback) {
+  var f1 = function(callback) {
     var defaultSearchOptions = {
-      disabled: {$ne: true},
-      deprecated: {$ne: true}
+      disabled: { $ne: true },
+      deprecated: { $ne: true }
     }
     var searchOptions = _.defaults(defaultSearchOptions, options.project)
-    getProjects({
-      Project: options.models.Project,
-      project: searchOptions,
-      limit: options.limit,
-      logger
-    },
-      (projects) => callback(null, projects))
+    getProjects(
+      {
+        Project: options.models.Project,
+        project: searchOptions,
+        limit: options.limit,
+        logger
+      },
+      projects => callback(null, projects)
+    )
   }
 
   // STEP 2: get superprojects
   var superprojects = []
-  var processProject = function (project, cb) {
+  var processProject = function(project, cb) {
     result.processed++
     const opts = {
       Snapshot: options.models.Snapshot,
       debug: options.debug,
       logger
     }
-    getSnapshotData(project, opts, function (err, report) {
+    getSnapshotData(project, opts, function(err, report) {
       if (err) return cb(err)
       var superproject = createSuperproject(project, report)
       superprojects.push(superproject)
@@ -55,17 +57,15 @@ var start = function (batchOptions, done) {
     })
   }
 
-  var f2 = function (projects, callback) {
-    processAllProjects(
-      projects,
-      processProject,
-      { logger },
-      () => callback(null, superprojects))
+  var f2 = function(projects, callback) {
+    processAllProjects(projects, processProject, { logger }, () =>
+      callback(null, superprojects)
+    )
   }
 
   // STEP 3: get tags
-  var f3 = function (superprojects, callback) {
-    getTags({Tag: options.models.Tag}, function (err, tags) {
+  var f3 = function(superprojects, callback) {
+    getTags({ Tag: options.models.Tag }, function(err, tags) {
       if (err) throw err
       callback(null, {
         // include only projects that have at least one snapshot
@@ -77,8 +77,8 @@ var start = function (batchOptions, done) {
   }
 
   // Write the JSON file
-  var f4 = function (json, cb) {
-    write(json, {}, function (err, result) {
+  var f4 = function(json, cb) {
+    write(json, {}, function(err, result) {
       if (err) throw err
       result.projects = json.projects.length
       result.tags = json.tags.length
