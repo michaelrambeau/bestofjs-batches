@@ -1,13 +1,14 @@
-var fs = require('fs-extra')
-// I use createOutputStream(file, [options]) from fs-extra package
-// Exactly like createWriteStream, but if the directory does not exist, it's created.
-var write = function(json, options, cb) {
-  var writer = fs.createOutputStream('./build/projects.json')
+const fs = require('fs-extra')
+const path = require('path')
+
+function write(json, options, cb) {
   json.date = new Date()
-  writer.write(JSON.stringify(json))
-  writer.end()
-  cb(null, {
-    msg: 'JSON file created.'
+  const filepath = path.join(process.cwd(), 'build', 'projects.json')
+  fs.outputJson(filepath, json, err => {
+    if (err) return cb(err)
+    cb(null, {
+      msg: 'JSON file created.'
+    })
   })
 }
 module.exports = write
