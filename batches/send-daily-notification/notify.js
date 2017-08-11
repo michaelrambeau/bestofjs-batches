@@ -1,20 +1,23 @@
 const request = require('request-promise')
 
+// Convert a `project` object (from bestofjs API)
+// into an "attachment" included in the Slack message
+// See: https://api.slack.com/docs/message-attachments
 function projectToAttachment(project, pretext) {
   const url = project.url || `https://github.com/${project.full_name}`
   const owner = project.full_name.split('/')[0]
-  const icon = project.icon
-    ? project.icon
-    : `https://avatars.githubusercontent.com/u/${project.owner_id}?v=3&s=50`
+  const author_name = owner
+  // `thumb_url` does not accept .svg files so we don't use project `icon` property
+  const thumb_url = `https://avatars.githubusercontent.com/u/${project.owner_id}?v=3&s=75`
   const attachment = {
     color: '#e65100',
     pretext,
-    author_name: owner,
+    author_name,
     author_link: `https://github.com/${owner}`,
-    author_icon: icon,
     title: project.name,
     title_link: url,
-    text: project.description
+    text: project.description,
+    thumb_url
   }
   return attachment
 }
