@@ -1,36 +1,15 @@
-const request = require('request')
 const fetch = require('node-fetch')
+const packageJson = require('package-json')
 
 function getNpmRegistryData(packageName, cb) {
-  const endPoint = 'http://registry.npmjs.org'
-  const getUrl = packageName => {
-    const { name, scope } = parsePackageName(packageName)
-    if (scope) {
-      // npm "scoped package" case, example: `@cycle/core`
-      return `${endPoint}/${name}/latest?scope=${scope}`
-    }
-    return `${endPoint}/${name}/latest`
-  }
-  const options = {
-    url: getUrl(packageName)
-  }
-  // console.log('Checking npm registry', packageName, options)
-  return request.get(options, function(error, response, body) {
-    if (!error && response.statusCode === 200) {
-      try {
-        var json = JSON.parse(body)
-        return cb(null, json)
-      } catch (err) {
-        return cb(
-          new Error(
-            `Unable to parse JSON response from npm registry for package ${packageName} ${err.toString()}`
-          )
-        )
-      }
-    } else {
-      return cb(new Error(`Invalid response from npm registry ${packageName}`))
-    }
-  })
+  packageJson(packageName)
+    .then(data => {
+      cb(null, data)
+    })
+    .catch(err => {
+      const msg = err.message || ''
+      new Error(`Invalid response from npm registry ${packageName} ${msg}`)
+    })
 }
 
 function getPackageQualityData(packageName, cb) {

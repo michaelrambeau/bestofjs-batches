@@ -1,6 +1,6 @@
 {
   "name": "bestofjs-batches",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "description": "bestof.js.org batches (scheduled tasks)",
   "main": "index.js",
   "scripts": {
@@ -33,6 +33,7 @@
     "moment": "2.10.6",
     "mongoose": "4.3.4",
     "node-fetch": "^1.7.2",
+    "package-json": "^4.0.1",
     "request": "2.63.0",
     "request-promise": "^4.2.1",
     "scrape-it": "^3.0.1",
