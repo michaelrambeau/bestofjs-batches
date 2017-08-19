@@ -5,7 +5,7 @@ var mongoose = require('mongoose')
 // INPUT: project
 // OUTPUT: Github repository data
 function getStars(project) {
-  github.getRepoData(project).then(json => ({
+  return github.getRepoData(project).then(json => ({
     stars: json.stargazers_count,
     last_pushed: json.pushed_at
   }))

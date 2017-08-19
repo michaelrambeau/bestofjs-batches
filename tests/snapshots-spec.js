@@ -1,69 +1,52 @@
-var parallel = require('async').parallel
-var mongoose = require('mongoose')
+/* eslint-disable no-console */
+const mongoose = require('mongoose')
 require('dotenv').load()
-var test = require('tape')
+const test = require('tape')
 
-// Functions to test
 const helpers = require('../batches/helpers/snapshots')
 const getStars = helpers.getStars
 const createSnapshot = helpers.createSnapshot
 const getLastSnapshot = helpers.getLastSnapshot
 const isTodaySnapshot = helpers.isTodaySnapshot
-var dateOnly = require('../batches/build-data/functions').dateOnly
+const dateOnly = require('../batches/build-data/functions').dateOnly
+const Project = require('../models/Project')
+const Snapshot = require('../models/Snapshot')
+const Tag = require('../models/Tag')
+const options = {}
 
-var Project = require('../models/Project')
-var Snapshot = require('../models/Snapshot')
-var Tag = require('../models/Tag')
-var options = {}
-
-const start = () => {
+test('Snapshot test', t => {
   console.log('Connecting the database...')
-  var db = mongoose.connection
-  db.on('error', console.error.bind(console, 'connection error:'))
+  mongoose.connect(process.env.MONGO_URI)
+  t.plan(7)
+  const db = mongoose.connection
+  db.on('error', err => {
+    console.error(err)
+    t.fail('connection error')
+  })
   db.once('open', function() {
     console.log('Db connection opened!')
     options.models = { Project, Snapshot, Tag }
-
-    // Launch the tests!
-    parallel([test1, test2, test3], function(err, result) {
-      if (err) console.log('Error caught in the main callback', err)
-      mongoose.disconnect()
-      console.log('--- END, db connection closed ----')
-    })
-  })
-}
-//start()
-
-test('Sample tests', t => {
-  mongoose.connect(process.env.MONGO_URI)
-  const db = mongoose.connection
-  options.models = { Project, Snapshot, Tag }
-  const end = () => {
-    console.log('Closing the connection.')
-    mongoose.disconnect()
-    t.end()
-  }
-  db.once('open', () => {
-    t.pass('Db connection OK')
-    const tests = [test1(t), test2(t), test3(t)]
-    Promise.all(tests).then(() => end())
+    // test1(t)
+    Promise.all([test1, test2, test3].map(fn => fn(t)))
+      .then(() => {
+        mongoose.disconnect()
+        console.log('--- END, db connection closed ----')
+      })
+      .catch(err => {
+        console.error(err)
+      })
   })
 })
 
 function test1(assert) {
-  return new Promise(resolve => {
+  return new Promise(async resolve => {
     const project = {
       _id: '55ab9d0f8f937d03008d41c4'
     }
-    getLastSnapshot(project, { Snapshot: options.models.Snapshot }, function(
-      err,
-      result
-    ) {
-      console.log('res', result)
-      if (err) {
-        assert.fail('Error calling getLastSnapshot()', err)
-        return resolve()
-      }
+    try {
+      const result = await getLastSnapshot(project, {
+        Snapshot: options.models.Snapshot
+      })
       assert.ok(result, 'Should return a result')
       if (result) {
         assert.ok(
@@ -73,28 +56,31 @@ function test1(assert) {
       }
       console.log('isTodaySnapshot?', isTodaySnapshot(result))
       console.log('date only=', dateOnly(new Date('2015-09-25T21:10:01.436Z')))
-      return resolve()
-    })
+    } catch (err) {
+      console.err(err)
+      assert.fail(err.message)
+    }
+    return resolve()
   })
 }
 
 function test2(assert) {
   console.log('test2')
-  return new Promise(resolve => {
+  return new Promise(async resolve => {
     const project = {
       _id: '55ab9d0f8f937d03008d41c4',
       repository: 'https://github.com/DrBoolean/mostly-adequate-guide'
     }
     const options = {
       Snapshot: {
-        create: function(data, cb) {
+        create: function(data) {
           console.log('Snapshot created! [MOCK]', data)
-          cb(data)
+          return Promise.resolve(data)
         }
       }
     }
-    getStars(project, options, function(err, result) {
-      if (err) console.log('An error occurred!', err)
+    try {
+      const result = await getStars(project, options)
       assert.ok(result, 'getStars() should return something')
       if (result) {
         assert.ok(
@@ -106,33 +92,39 @@ function test2(assert) {
           'getStars() should return a star count bigger than 1000'
         )
       }
-      return resolve()
-    })
+    } catch (err) {
+      console.err(err)
+      assert.fail(err.message)
+    }
+    return resolve()
   })
 }
 
 function test3(assert) {
   console.log('test3')
-  return new Promise(resolve => {
+  return new Promise(async resolve => {
     const project = {
       _id: '55ab9d0f8f937d03008d41c4',
       repository: 'https://github.com/DrBoolean/mostly-adequate-guide'
     }
     const options = {
       Snapshot: {
-        create: function(data, cb) {
+        create: function(data) {
           console.log('Snapshot created! [MOCK]', data)
-          cb(null, data)
+          return Promise.resolve(data)
         }
       }
     }
-    createSnapshot(project, options, function(err, result) {
-      if (err) console.log('An error occurred!', err)
+    const result = await createSnapshot(project, options)
+    try {
       assert.ok(result, 'createSnapshot() should return something')
       if (result) {
         assert.ok(result.stars, 'Snapshot should have been created')
       }
-      return resolve()
-    })
+    } catch (err) {
+      console.err(err)
+      assert.fail(err.message)
+    }
+    return resolve()
   })
 }

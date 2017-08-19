@@ -12,7 +12,7 @@
     "deploy:dev": "firebase deploy --project dev",
     "notify": "node batches/send-daily-notification",
     "test": "tape tests/**/*-spec.js",
-    "test-debug": "tape tests/trends-spec.js",
+    "test-debug": "tape tests/snapshots-spec.js",
     "test-topics": "node tests/get-topics.js",
     "test-hof": "node tests/hof-spec.js",
     "lint": "standard ./batches/hof/index.js"
@@ -23,7 +23,6 @@
     "node": ">=8.1.2"
   },
   "dependencies": {
-    "async": "0.9.2",
     "bluebird": "3.5.0",
     "dotenv": "1.2.0",
     "firebase-tools": "3.2.2",
