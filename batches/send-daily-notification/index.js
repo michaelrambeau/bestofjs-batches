@@ -1,6 +1,7 @@
+// Read secrets from `.env` file in local development mode withou emitting error message
+require('dotenv').config({ silent: true })
 const fs = require('fs-extra')
 const path = require('path')
-require('dotenv').config()
 
 const { notifySuccess } = require('./notify')
 const createLogger = require('../createLogger')

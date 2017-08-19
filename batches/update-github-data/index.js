@@ -15,7 +15,6 @@ const getProjects = helpers.getProjects
 
 async function start(options) {
   const { logger } = options
-  logger.info('Start `update-github-data` batch', options.limit)
   // STEP 1: grab all projects, exluding "deprecated" projects
   const defaultSearchOptions = {
     deprecated: { $ne: true }

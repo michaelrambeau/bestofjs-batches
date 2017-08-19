@@ -10,7 +10,6 @@ const write = require('./save-json')
 
 async function start(options) {
   const { logger } = options
-  logger.info('> Start `build-data`')
   // STEP 1: grab all projects, ignoring "deprecated" and "disabled" projects
   const defaultSearchOptions = {
     disabled: { $ne: true },

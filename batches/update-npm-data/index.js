@@ -5,7 +5,6 @@ const getProjects = helpers.getProjects
 
 async function start(options) {
   const { logger } = options
-  logger.info('> Start `update-npm-data` batch')
   const defaultSearchOptions = {
     deprecated: { $ne: true },
     'npm.name': { $ne: '' }
