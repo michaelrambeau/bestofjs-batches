@@ -11,30 +11,32 @@ const startDate = new Date()
 // Return an object with 2 properties
 // - stars: current number of stars
 // - deltas: daily star variations
-const getSnapshotData = function(project, options, cb) {
+function getSnapshotData(project, options) {
   const { logger } = options
   logger.debug('getSnapshotData', project.name)
-  var d = moment().subtract(500, 'days').toDate()
+  var d = moment().subtract(366, 'days').toDate()
   d.setHours(0, 0, 0, 0)
-  options.Snapshot
-    .find()
-    .where('project')
-    .equals(project._id)
-    .where('createdAt')
-    .gt(d)
-    .sort({
-      createdAt: -1
-    })
-    .exec(function(err, docs) {
-      if (err) return cb(err)
-      const points = createAllPoints(docs)
-      const report = {
-        deltas: pointsToDeltas(points),
-        trends: pointsToTrends(points),
-        monthlyTrends: getMonthlyTrends(docs, { startDate }),
-        stars: docs.length > 0 ? docs[0].stars : 0
-      }
-      return cb(null, report)
-    })
+  return new Promise((resolve, reject) => {
+    options.Snapshot
+      .find()
+      .where('project')
+      .equals(project._id)
+      .where('createdAt')
+      .gt(d)
+      .sort({
+        createdAt: -1
+      })
+      .exec(function(err, docs) {
+        if (err) return reject(err)
+        const points = createAllPoints(docs)
+        const report = {
+          deltas: pointsToDeltas(points),
+          trends: pointsToTrends(points),
+          monthlyTrends: getMonthlyTrends(docs, { startDate }),
+          stars: docs.length > 0 ? docs[0].stars : 0
+        }
+        return resolve(report)
+      })
+  })
 }
 module.exports = getSnapshotData

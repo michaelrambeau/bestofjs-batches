@@ -7,40 +7,24 @@ const fields = {
   npm: ['username', 'count']
 }
 
-module.exports = function(hero, options) {
-  const logger = options.logger
-  return new Promise(function(resolve, reject) {
-    const login = hero.github.login
+function processHero(hero, options) {
+  const { logger } = options
+  const login = hero.github.login
+  try {
     logger.debug('Processing the hero', hero.toString())
-
-    const p1 = new Promise(function(resolve, reject) {
-      github.getUserData(login, function(err, json) {
-        if (err) return reject(err)
-        logger.debug('Github API response OK', login)
-        return resolve(json)
-      })
-    })
-
-    const p2 =
+    const githubData = github.getUserData(login)
+    // A dash in the npm means username means that I did not found the guy on npm
+    // No need to trigger invalid requests everyday
+    const npmData =
       hero.npm.username === '-'
-        ? // A dash in the npm means username means that I did not found the guy on npm
-          // No need to trigger invalid requests everyday
-          Promise.resolve({
-            username: '-',
-            count: 0
-          })
-        : getNpmData(hero.npm.username || login.toLowerCase()).then(r => {
-            logger.debug('npm site response OK', login)
-            return r
-          })
-
-    return Promise.all([p1, p2]).then(result => {
+        ? Promise.resolve({ username: '-', count: 0 })
+        : getNpmData(hero.npm.username || login.toLowerCase())
+    return Promise.all([githubData, npmData]).then(result => {
       const json = {
         github: result[0],
         npm: result[1]
       }
-
-      var nbUpdate = 0
+      let nbUpdate = 0
       Object.keys(fields).forEach(key =>
         fields[key].forEach(fieldName => {
           const value = json[key][fieldName]
@@ -48,32 +32,22 @@ module.exports = function(hero, options) {
           hero[key][fieldName] = value
         })
       )
-
       if (nbUpdate === 0) {
         logger.verbose('Db already up-to-date', hero.toString())
-        return resolve(success(hero, false))
+        return aggregateHeroData(hero, { saved: false, processed: true })
       }
-
-      logger.debug(
-        'Data has to be updated',
-        hero.toString(),
-        nbUpdate,
-        'update(s)'
-      )
-      hero.save(function(err) {
-        if (err) {
-          logger.error(`Unable to save the hero ${login} ${err.message}`)
-          reject(err)
-        } else {
-          logger.verbose('Hero saved!', hero.toString())
-          resolve(success(hero, true))
-        }
-      })
+      logger.debug(`${nbUpdate} field(s) to update'`, hero.toString())
+      hero.save()
+      logger.verbose('Hero saved!', hero.toString())
+      return aggregateHeroData(hero, { saved: true, processed: true })
     })
-  })
+  } catch (err) {
+    logger.error(`Unable to save the hero ${login} ${err.message}`)
+    return aggregateHeroData(hero, { error: true, processed: true })
+  }
 }
 
-function success(hero, saved) {
+function aggregateHeroData(hero, meta) {
   const payload = {
     username: hero.github.login,
     avatar: hero.github.avatar_url,
@@ -85,12 +59,10 @@ function success(hero, saved) {
     npm: hero.npm.username,
     modules: hero.npm.count
   }
-  const meta = {
-    saved,
-    processed: true
-  }
   return {
     meta,
     payload
   }
 }
+
+module.exports = processHero

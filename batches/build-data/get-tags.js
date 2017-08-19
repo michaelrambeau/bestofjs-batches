@@ -7,9 +7,6 @@ function getTags(options, cb) {
     name: 1,
     _id: 0 // required to omit _id field
   }
-  model.find({}, fields).sort({ name: 1 }).exec(function(err, docs) {
-    if (err) return cb(err)
-    cb(null, docs)
-  })
+  return model.find({}, fields).sort({ name: 1 })
 }
 module.exports = getTags

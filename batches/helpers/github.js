@@ -1,59 +1,43 @@
-const request = require('request')
+const request = require('request-promise')
 const fetch = require('node-fetch')
 const scrapeIt = require('scrape-it')
 
-function githubRequest(url, cb) {
+function githubRequest(url) {
   const fullUrl = `https://api.github.com/${url}?client_id=${process.env
     .GITHUB_CLIENT_ID}&client_secret=${process.env.GITHUB_CLIENT_SECRET}`
   const options = {
+    json: true,
     url: fullUrl,
     headers: {
       'User-Agent': process.env.GITHUB_USERNAME,
       Accept: 'application/vnd.github.quicksilver-preview+json'
     }
   }
-  return request.get(options, function(error, response, body) {
-    if (!error && response.statusCode === 200) {
-      try {
-        var json = JSON.parse(body)
-        return cb(null, json)
-      } catch (err) {
-        return cb(
-          new Error(
-            `Unable to parse JSON response from Github for url "${url}": ${err}`
-          )
-        )
-      }
-    } else {
-      return cb(
+  return request
+    .get(options)
+    .catch(
+      error =>
         new Error(
-          `Invalid response from Github for url "${url}" ${response
-            ? response.statusCode
-            : ''} ${error ? error.toString() : ''}`
+          `Unable to parse JSON response from Github for url "${url}": ${error}`
         )
-      )
-    }
-  })
+    )
 }
 
 const githubHelpers = {
-  getRepoData: function(project, cb) {
+  getRepoData: function(project) {
     const fullname =
       project.github && project.github.full_name
         ? project.github.full_name
         : /\/([^/]+\/[^/]+?$)/.exec(project.repository)[1]
-    githubRequest(`repos/${fullname}`, cb)
+    return githubRequest(`repos/${fullname}`)
   },
-  getUserData: function(username, cb) {
-    githubRequest(`users/${username}`, cb)
+  getUserData: function(username) {
+    return githubRequest(`users/${username}`)
   },
-  getPackage: function(project, branch, cb) {
+  getPackage: function(project, branch) {
     const url = `https://raw.githubusercontent.com/${project.github
       .full_name}/${branch}/package.json`
-    fetch(url)
-      .then(r => r.json())
-      .then(json => cb(null, json))
-      .catch(err => cb(err))
+    return fetch(url).then(r => r.json())
   },
   getTopics: function(full_name) {
     return scrapeIt(`https://github.com/${full_name}`, {

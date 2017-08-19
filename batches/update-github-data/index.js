@@ -7,64 +7,30 @@
 // IF it is not today's snapshot =>
 //   - save a "snapshot" record in the database
 
-var _ = require('lodash')
-var async = require('async')
-var waterfall = async.waterfall
-var updateProject = require('./updateOneProject')
+const updateProject = require('./update-project-github')
 
-var helpers = require('../helpers/projects')
-var processAllProjects = helpers.processAllProjects
-var getProjects = helpers.getProjects
+const helpers = require('../helpers/projects')
+const processAllProjects = helpers.processAllProjects
+const getProjects = helpers.getProjects
 
-var start = function(batchOptions, done) {
-  var defaultOptions = {
-    result: {
-      processed: 0,
-      updated: 0,
-      created: 0,
-      error: 0,
-      stars: 0
-    }
-  }
-  var options = _.defaults(batchOptions, defaultOptions)
+async function start(options) {
   const { logger } = options
   logger.info('Start `update-github-data` batch', options.limit)
-
   // STEP 1: grab all projects, exluding "deprecated" projects
-  var f1 = function(callback) {
-    var defaultSearchOptions = {
-      deprecated: { $ne: true }
-    }
-    var searchOptions = _.defaults(defaultSearchOptions, options.project)
-    getProjects(
-      {
-        Project: options.models.Project,
-        project: searchOptions,
-        limit: options.limit,
-        logger
-      },
-      projects => callback(null, projects)
-    )
+  const defaultSearchOptions = {
+    deprecated: { $ne: true }
   }
-
-  const processProject = function(project, cb) {
-    updateProject(project, options, function(err) {
-      if (err) {
-        logger.error(`Unable to process ${project.toString()}: ${err.message}`)
-        options.result.error++
-      }
-      cb(null, true)
+  const searchOptions = Object.assign({}, defaultSearchOptions, options.project)
+  const projects = await getProjects(
+    Object.assign({}, options, {
+      Project: options.models.Project,
+      project: searchOptions
     })
-  }
-
+  )
   // STEP 2: take the snapshot for every project (if it has been already taken today)
-  var f2 = function(projects, callback) {
-    processAllProjects(projects, processProject, { logger }, () =>
-      callback(null, options.result)
-    )
-  }
-
-  return waterfall([f1, f2], done)
+  return await processAllProjects(projects, updateProject(options), {
+    logger
+  })
 }
 
 module.exports = start

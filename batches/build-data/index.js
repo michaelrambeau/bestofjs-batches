@@ -1,93 +1,58 @@
 // Batch #2: from snapshots saved in the database, build a JSON file saved in `build` folder
-var _ = require('lodash')
-var async = require('async')
-var waterfall = async.waterfall
+const helpers = require('../helpers/projects')
+const processAllProjects = helpers.processAllProjects
+const getProjects = helpers.getProjects
+const createSuperproject = helpers.createSuperproject
 
-var helpers = require('../helpers/projects')
-var processAllProjects = helpers.processAllProjects
-var getProjects = helpers.getProjects
-var createSuperproject = helpers.createSuperproject
+const getSnapshotData = require('./get-snapshot-data')
+const getTags = require('./get-tags')
+const write = require('./save-json')
 
-var getSnapshotData = require('./get-snapshot-data')
-var getTags = require('./get-tags')
-var write = require('./save-json')
-
-var start = function(batchOptions, done) {
-  var defaultOptions = null
-  var options = _.defaults(batchOptions, defaultOptions)
+async function start(options) {
   const { logger } = options
   logger.info('> Start `build-data`')
-  var result = {
-    processed: 0,
-    error: 0
-  }
-
   // STEP 1: grab all projects, ignoring "deprecated" and "disabled" projects
-  var f1 = function(callback) {
-    var defaultSearchOptions = {
-      disabled: { $ne: true },
-      deprecated: { $ne: true }
-    }
-    var searchOptions = _.defaults(defaultSearchOptions, options.project)
-    getProjects(
-      {
-        Project: options.models.Project,
-        project: searchOptions,
-        limit: options.limit,
-        logger
-      },
-      projects => callback(null, projects)
-    )
+  const defaultSearchOptions = {
+    disabled: { $ne: true },
+    deprecated: { $ne: true }
   }
-
-  // STEP 2: get superprojects
-  var superprojects = []
-  var processProject = function(project, cb) {
-    result.processed++
+  const searchOptions = Object.assign({}, defaultSearchOptions, options.project)
+  const projects = await getProjects(
+    Object.assign({}, options, {
+      Project: options.models.Project,
+      project: searchOptions
+    })
+  )
+  // STEP 2: get 'superprojects' (aggregated data used later to create the JSON file consumed by the web app)
+  const processProject = async project => {
     const opts = {
       Snapshot: options.models.Snapshot,
       debug: options.debug,
       logger
     }
-    getSnapshotData(project, opts, function(err, report) {
-      if (err) return cb(err)
-      var superproject = createSuperproject(project, report)
-      superprojects.push(superproject)
-      return cb(null, superprojects)
-    })
+    const report = await getSnapshotData(project, opts)
+    return { data: createSuperproject(project, report) }
   }
 
-  var f2 = function(projects, callback) {
-    processAllProjects(projects, processProject, { logger }, () =>
-      callback(null, superprojects)
-    )
-  }
+  const result = await processAllProjects(projects, processProject, { logger })
+  const superprojects = result.data
 
-  // STEP 3: get tags
-  var f3 = function(superprojects, callback) {
-    getTags({ Tag: options.models.Tag }, function(err, tags) {
-      if (err) throw err
-      callback(null, {
-        // include only projects that have at least one snapshot
-        // ( = include only projects created at least 2 days ago)
-        projects: superprojects.filter(project => project.deltas.length > 0),
-        tags
-      })
-    })
-  }
-
-  // Write the JSON file
-  var f4 = function(json, cb) {
-    write(json, {}, function(err, result) {
-      if (err) throw err
-      result.projects = json.projects.length
-      result.tags = json.tags.length
-      result.date = json.date
-      cb(null, result)
-    })
-  }
-
-  return waterfall([f1, f2, f3, f4], done)
+  const tags = await getTags({ Tag: options.models.Tag })
+  // include only projects that have at least one snapshot
+  // ( = include only projects created at least 2 days ago)
+  const filteredProjects = superprojects
+    .filter(item => !!item) // remove null items that might be created if error occurred
+    .filter(project => project.deltas.length > 0)
+  const json = { tags, projects: filteredProjects }
+  await write(json)
+  const meta = Object.assign({}, result.meta, {
+    message: 'JSON file created',
+    tags: json.tags.length,
+    projects: json.projects.length,
+    date: json.date
+  })
+  const finalResult = { meta }
+  return finalResult
 }
 
 module.exports = start

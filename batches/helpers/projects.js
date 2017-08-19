@@ -1,44 +1,78 @@
+const Promise = require('bluebird')
 const _ = require('lodash')
-const async = require('async')
+const prettyMs = require('pretty-ms')
 
 // INPUT:
 // projects: an array of projects
 // processProject: function to be applied on each project
 // OUTPUT callback function
-function processAllProjects(projects, processProject, batchOptions, cb) {
+async function processAllProjects(projects, processProject, batchOptions) {
   const t0 = new Date()
   const defaultOptions = {
-    parallelLimit: 20
+    concurrency: 20
   }
-  const options = _.extend(defaultOptions, batchOptions)
+  const options = Object.assign({}, defaultOptions, batchOptions)
   const logger = options.logger
-  const limit = options.parallelLimit
-  logger.info(projects.length, 'project(s) to process... async limit=', limit)
-  async.eachLimit(projects, limit, processProject, function(err) {
-    if (err) logger.error('Error', err)
-    const duration = (new Date() - t0) / 1000
-    logger.info('End of the project loop', duration)
-    return cb()
-  })
+  const concurrency = options.concurrency
+  logger.info(
+    projects.length,
+    'project(s) to process... concurrency=',
+    concurrency
+  )
+  const safeProcessProject = project => {
+    return processProject(project, options)
+      .then(result => ({
+        data: result.data,
+        meta: Object.assign({}, result.meta, {
+          processed: true,
+          error: false
+        })
+      }))
+      .catch(err => {
+        logger.error('Unable to process', project.toString(), err.stack)
+        return Promise.resolve({
+          data: null,
+          meta: {
+            processed: true,
+            error: true
+          }
+        })
+      })
+  }
+  const result = await Promise.map(projects, safeProcessProject, {
+    concurrency
+  }).reduce(
+    (acc, val) => {
+      const meta = Object.keys(val.meta)
+        .filter(key => !!val.meta[key])
+        .reduce(metaReducer, acc.meta)
+      return Object.assign({}, acc, {
+        data: acc.data.concat(val.data),
+        meta
+      })
+    },
+    { meta: {}, data: [] }
+  )
+  const duration = new Date() - t0
+  logger.info('End of the project loop', prettyMs(duration))
+  return result
 }
 
-function getProjects(options, cb) {
-  const logger = options.logger
+const metaReducer = (acc, val) =>
+  Object.assign({}, acc, {
+    [val]: acc[val] ? acc[val] + 1 : 1
+  })
+
+function getProjects(options) {
+  const { logger } = options
+  logger.debug('Searching', options.project)
   return options.Project
     .find(options.project)
     .populate('tags')
     .sort({
       createdAt: 1
     })
-    .exec(function(err, projects) {
-      if (err) {
-        throw err
-      }
-      if (projects.length === 0)
-        logger.error('No project found!', options.project)
-      var limit = options.limit
-      return cb(limit ? projects.slice(0, limit) : projects)
-    })
+    .limit(options.limit)
 }
 
 // Return the JSON object to save later in the filesystem
