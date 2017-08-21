@@ -15,7 +15,7 @@ function convertHeroProjects(hero) {
 
 async function main(options) {
   const model = options.models.Hero
-  const { logger, concurrency = 20 } = options
+  const { logger, concurrency = 10 } = options
   const docs = await model
     .find()
     .populate({ path: 'projects', select: 'name' })
@@ -30,7 +30,7 @@ async function main(options) {
           'processed',
           'saved'
         ])
-        logger.info('STEP 1 OK', report)
+        logger.info('First part OK', report)
         return results.map(result => result.payload)
       })
       // sort results by followers

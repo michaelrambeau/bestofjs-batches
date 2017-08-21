@@ -1,6 +1,6 @@
-# bestofjs-batches v2.0
+# bestofjs-batches
 
-Scheduled tasks that generate static data used by bestof.js.org web application.
+Scheduled tasks, run every day, that generate static data consumed by [bestof.js.org](https://bestof.js.org/) web application.
 
 [![Build Status](https://semaphoreci.com/api/v1/projects/add14899-9368-4ae3-89df-21c09c9e0c36/548282/badge.svg)](https://semaphoreci.com/mikeair/bestofjs-batches)
 
@@ -11,21 +11,27 @@ Scheduled tasks that generate static data used by bestof.js.org web application.
 
 ## Commands
 
-`npm run batch-test` : run the test batch (a simple loop through the projects stored in the database)
+### Main script
 
 `npm run daily`: script to be run every day, launched by the daily build process on the CI server.
 
-`npm run github`: part 1 of the daily build: update Github data and take snapshots.
+### Other commands
 
-`npm run build`: part 2 of the daily build: create the json file from snapshots stored in the database.
+`node batches test` : run the test batch (a simple loop through the projects stored in the database)
+
+`node batches github`: part 1 of the daily process: update Github data and take snapshots.
+
+`node batches build`: part 2 of the daily process: create `projects.json` file from snapshots stored in the database.
+
+`node batches hof`: part 3 of the daily process: update the Hall-of-Fame and build `hof.json` file
 
 
-## Command line parameters
+### Command line parameters
 
 The **first** parameter (required) is the name of the batch to launch
 
 ```
-npm run <batch_key> [-- --param1 value1 --param2 value2]
+node batches <batch_key>
 ```
 
 Optional parameters:
@@ -40,5 +46,5 @@ Optional parameters:
 Example:
 
 ```
-npm run batch-test -- --project 55723c9f4140883353bc775c
+node batches test --project 55723c9f4140883353bc775c
 ```

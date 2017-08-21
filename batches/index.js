@@ -12,6 +12,7 @@ const buildData = require('./build-data')
 const updateGithubData = require('./update-github-data')
 const updateNpmData = require('./update-npm-data')
 const updateHoF = require('./hof')
+const dailyDatabaseProcess = require('./daily-database-process')
 
 const argv = minimist(process.argv.slice(2))
 const options = getOptions(argv)
@@ -44,21 +45,21 @@ const Hero = require('../models/Hero')
 const db = mongoose.connection
 db.on('error', err => logger.error(`Db connection error ${err.toString()}`))
 db.once('open', async () => {
-  logger.warn(`Db connection open, start the batch "${key}"`)
-  const models = { Project, Snapshot, Tag, Hero }
-  if (options.readonly) {
-    setReadonly(Project)
-    setReadonly(Snapshot)
-  }
-  options.models = models
   try {
-    const result = await start(key, options)
-    logger.warn('--- THE END ---', result.meta)
-  } catch (err) {
-    logger.error('--- Termination with an ERROR ---', err.stack)
-  } finally {
+    logger.warn(`Db connection open, start the batch "${key}"`)
+    const models = { Project, Snapshot, Tag, Hero }
+    if (options.readonly) {
+      setReadonly(Project)
+      setReadonly(Snapshot)
+    }
+    options.models = models
+
+    logger.profile('batch')
+    await startBatch(key, options)
     logger.profile('batch')
     mongoose.disconnect()
+  } catch (err) {
+    logger.error('Unexpected error!', err.message)
   }
 })
 
@@ -67,18 +68,23 @@ const handlers = {
   github: updateGithubData,
   build: buildData,
   hof: updateHoF,
-  npm: updateNpmData
+  npm: updateNpmData,
+  'daily-database-process': dailyDatabaseProcess
 }
 
-function start(key, options) {
-  logger.profile('batch')
-  const handler = handlers[key]
-  if (!handler) {
-    throw new Error(
-      'Specify a valid batch key as the 1st command line argument.'
-    )
+async function startBatch(key, options) {
+  try {
+    const handler = handlers[key]
+    if (!handler) {
+      throw new Error(
+        'Specify a valid batch key as the 1st command line argument.'
+      )
+    }
+    const result = await handler(options)
+    logger.warn('--- THE END ---', result.meta)
+  } catch (err) {
+    logger.error('--- Termination with an ERROR ---', err.stack)
   }
-  return handler(options)
 }
 
 // Disable model write instructions.

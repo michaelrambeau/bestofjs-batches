@@ -4,10 +4,7 @@
   "description": "bestof.js.org batches (scheduled tasks)",
   "main": "index.js",
   "scripts": {
-    "daily": "node batches github && node batches build && node batches hof && npm run deploy:prod && npm run notify",
-    "batch-test": "node batches test",
-    "build": "node batches build",
-    "github": "node batches github",
+    "daily": "node batches daily-database-process && npm run deploy:prod && npm run notify",
     "deploy:prod": "firebase deploy --project prod",
     "deploy:dev": "firebase deploy --project dev",
     "notify": "node batches/send-daily-notification",
