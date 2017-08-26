@@ -15,7 +15,7 @@ function convertHeroProjects(hero) {
 
 async function main(options) {
   const model = options.models.Hero
-  const { logger, concurrency = 10 } = options
+  const { logger, concurrency = 20 } = options
   const docs = await model
     .find()
     .populate({ path: 'projects', select: 'name' })

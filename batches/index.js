@@ -33,7 +33,7 @@ logger.info(
   'Connecting to',
   mongo_uri.replace(/(mongodb:\/\/)(.+):(.+)(@.+)/, '$1***@***$4')
 )
-mongoose.connect(mongo_uri)
+mongoose.connect(mongo_uri, { useMongoClient: true })
 
 // Load Mongoose models
 const Project = require('../models/Project')
@@ -57,7 +57,7 @@ db.once('open', async () => {
     logger.profile('batch')
     await startBatch(key, options)
     logger.profile('batch')
-    mongoose.disconnect()
+    db.close()
   } catch (err) {
     logger.error('Unexpected error!', err.message)
   }

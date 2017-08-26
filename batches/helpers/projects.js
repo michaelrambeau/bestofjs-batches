@@ -9,7 +9,7 @@ const prettyMs = require('pretty-ms')
 async function processAllProjects(projects, processProject, batchOptions) {
   const t0 = new Date()
   const defaultOptions = {
-    concurrency: 10
+    concurrency: 20
   }
   const options = Object.assign({}, defaultOptions, batchOptions)
   const logger = options.logger
