@@ -1,45 +1,50 @@
-const _ = require('lodash')
+const { pick, get } = require('lodash')
 
-const github = require('../helpers/github')
-const helpers = require('../helpers/snapshots')
-
-const getLastSnapshot = helpers.getLastSnapshot
-const isTodaySnapshot = helpers.isTodaySnapshot
+const { getTopics, getRepoData } = require('../helpers/github')
+const { getLastSnapshot, isTodaySnapshot } = require('../helpers/snapshots')
+const { updateDailyTrendsIfNeeded } = require('./helpers')
 
 const processProject = options => async project => {
-  const { logger } = options
-  logger.debug('STEP1: get project data from Github API', project.toString())
-  const json = await getGithubData(project)
-  const full_name = json.full_name
-  logger.debug('STEP2: Get topics by scrapping Github web page', { full_name })
-  const { topics } = await github.getTopics(full_name)
-  logger.debug('STEP3: update project record from Github data', json)
-  project.github = Object.assign({}, json, { topics })
-  let updated = false
-  try {
-    await project.save()
-    logger.verbose('Project saved!', project.toString())
-    updated = true
-  } catch (err) {
-    throw new Error(
-      `Unable to save project ${project.toString()} ${err.message}`
-    )
-  }
-  logger.debug('STEP4: save a snapshot record for today, if needed.')
-  const stars = json.stargazers_count
-  const result = await takeSnapshotIfNeeded(project, stars, {
+  const { logger, readonly } = options
+  logger.debug('STEP 1: get project data from Github API', project.toString())
+  const githubData = await getGithubData(project)
+  const { full_name, stargazers_count } = githubData
+  logger.debug('STEP 2: Get topics by scrapping Github web page', { full_name })
+  const { topics } = await getTopics(full_name)
+  logger.debug('STEP 3: save a snapshot record for today, if needed.')
+  const {
+    created,
+    previous
+  } = await takeSnapshotIfNeeded(project, stargazers_count, {
     models: options.models,
     logger
   })
-  return { meta: { created: result === 1, updated } }
+  let updated = false
+  project.trends = updateDailyTrendsIfNeeded(project, previous, options)
+  if (!readonly) {
+    logger.debug('STEP 4: update project record from Github data', {
+      githubData
+    })
+    project.github = Object.assign({}, githubData, { topics })
+    try {
+      await project.save()
+      logger.verbose('Project saved!', project.toString())
+      updated = true
+    } catch (err) {
+      throw new Error(
+        `Unable to save project ${project.toString()} ${err.message}`
+      )
+    }
+  }
+  return { meta: { createdSnapshots: created === 1, updated } }
 }
 
 function getGithubData(project) {
-  return github.getRepoData(project).then(parseGithubData)
+  return getRepoData(project).then(parseGithubData)
 }
 
 function parseGithubData(json) {
-  const result1 = _.pick(json, [
+  const result1 = pick(json, [
     'name',
     'full_name',
     'description',
@@ -48,8 +53,8 @@ function parseGithubData(json) {
     'pushed_at'
   ])
   const result2 = Object.assign({}, result1, {
-    owner_id: _.get(json, 'owner.id'),
-    branch: _.get(json, 'default_branch')
+    owner_id: get(json, 'owner.id'),
+    branch: get(json, 'default_branch')
   })
   return result2
 }
@@ -63,7 +68,7 @@ async function takeSnapshotIfNeeded(project, stars, options) {
       `A snapshot already exists for today (${snapshot.stars} stars)`,
       project.name
     )
-    return 0
+    return { created: false, previous: snapshot }
   } else {
     const data = {
       project: project._id,
@@ -76,7 +81,7 @@ async function takeSnapshotIfNeeded(project, stars, options) {
       project.toString(),
       data.stars
     )
-    return 1
+    return { created: true, previous: snapshot }
   }
 }
 

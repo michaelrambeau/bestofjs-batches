@@ -57,7 +57,8 @@ fields = {
   },
   colors: {
     vibrant: String
-  }
+  },
+  trends: Object
 }
 
 schema = new mongoose.Schema(fields, {

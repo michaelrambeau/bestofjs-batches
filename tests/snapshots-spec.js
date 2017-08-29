@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 const mongoose = require('mongoose')
+mongoose.Promise = require('bluebird')
 require('dotenv').load()
 const test = require('tape')
 
@@ -16,7 +17,7 @@ const options = {}
 
 test('Snapshot test', t => {
   console.log('Connecting the database...')
-  mongoose.connect(process.env.MONGO_URI)
+  mongoose.connect(process.env.MONGO_URI, { useMongoClient: true })
   t.plan(7)
   const db = mongoose.connection
   db.on('error', err => {

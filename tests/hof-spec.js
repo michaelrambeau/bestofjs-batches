@@ -8,22 +8,30 @@ const slugify = require('../batches/helpers/slugify')
 
 var mongo_key = 'MONGO_URI'
 const mongo_uri = process.env[mongo_key]
-mongoose.connect(mongo_uri)
+mongoose.connect(mongo_uri, { useMongoClient: true })
 
 test('Find request', assert => {
-  HeroModel.find()
-    .populate({ path: 'projects', select: 'github.name' })
-    .sort({ 'github.followers': -1 })
-    .limit(3)
-    .then(docs => {
-      console.log(
-        docs.map((hero, i) =>
-          console.log(i, hero.github.name, convertHeroProjects(hero.toObject()))
+  const db = mongoose.connection
+  db.once('open', () => {
+    HeroModel.find()
+      .populate({ path: 'projects', select: 'github.name' })
+      .sort({ 'github.followers': -1 })
+      .limit(3)
+      .then(docs => {
+        console.log(
+          docs.map((hero, i) =>
+            console.log(
+              i,
+              hero.github.name,
+              convertHeroProjects(hero.toObject())
+            )
+          )
         )
-      )
-      assert.end()
-    })
-    .catch(err => assert.fail(err))
+        assert.end()
+        db.close()
+      })
+      .catch(err => assert.fail(err))
+  })
 })
 
 function convertHeroProjects(hero) {

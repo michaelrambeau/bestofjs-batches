@@ -9,7 +9,7 @@
     "deploy:dev": "firebase deploy --project dev",
     "notify": "node batches/send-daily-notification",
     "test": "tape tests/**/*-spec.js",
-    "test-debug": "tape tests/snapshots-spec.js",
+    "test-debug": "tape batches/update-github-data/*.spec.js",
     "test-topics": "node tests/get-topics.js",
     "test-hof": "node tests/hof-spec.js",
     "lint": "standard ./batches/hof/index.js"
@@ -27,6 +27,7 @@
     "lodash": "3.10.1",
     "minimist": "1.2.0",
     "moment": "2.10.6",
+    "moment-timezone": "^0.5.13",
     "mongoose": "^4.11.7",
     "node-fetch": "^1.7.2",
     "package-json": "^4.0.1",
