@@ -12,12 +12,6 @@ function isSameDay(dateA, dateB) {
 function updateDailyTrendsIfNeeded(project, previousSnapshot, options) {
   const { logger } = options
   if (!previousSnapshot) return null // No `trends` object to create if there is no snapshot
-  const updatedAt = get(project, 'trends.updatedAt')
-  const snapshotDate = previousSnapshot.createdAt
-  if (isSameDay(updatedAt, snapshotDate)) {
-    logger.debug('`trends.daily` already up-to-date')
-    return project.trends
-  }
   const stars = {
     now: project.github.stargazers_count,
     before: previousSnapshot.stars

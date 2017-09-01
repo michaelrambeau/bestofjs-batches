@@ -37,15 +37,6 @@ const project = {
   }
 }
 
-test('Check if updating trends is needed => NO', assert => {
-  const previousSnapshot = { createdAt: d2, stars: 100 }
-  const trends = updateDailyTrendsIfNeeded(project, previousSnapshot, {
-    logger
-  })
-  assert.deepEqual(trends, project.trends, 'It should NOT update the trends')
-  assert.end()
-})
-
 test('Check if updating trends is needed => YES!', assert => {
   const previousSnapshot = { createdAt: d3, stars: 100 }
   const trends = updateDailyTrendsIfNeeded(project, previousSnapshot, {
