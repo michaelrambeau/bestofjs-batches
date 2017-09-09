@@ -16,7 +16,10 @@ function updateDailyTrendsIfNeeded(project, previousSnapshot, options) {
     now: project.github.stargazers_count,
     before: previousSnapshot.stars
   }
-  logger.debug('Updating `trends.daily`', stars)
+  logger.info('Updating `trends.daily`', {
+    project: project.toString(),
+    stars
+  })
   return updateDailyTrends(project, stars)
 }
 

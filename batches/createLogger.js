@@ -1,6 +1,7 @@
 const winston = require('winston')
 require('winston-loggly')
 
+const USE_LOGGLY = false
 const token = process.env.LOGGLY_TOKEN
 
 const options = {
@@ -17,7 +18,7 @@ function createLogger({ level = 'info' } = {}) {
     json: true,
     transports: [new winston.transports.Console()]
   })
-  if (token) {
+  if (USE_LOGGLY && token) {
     logger.add(winston.transports.Loggly, options)
   }
   return logger
