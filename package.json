@@ -28,7 +28,7 @@
     "minimist": "1.2.0",
     "moment": "2.10.6",
     "moment-timezone": "^0.5.13",
-    "mongoose": "^4.11.7",
+    "mongoose": "4.11.7",
     "node-fetch": "^1.7.2",
     "package-json": "^4.0.1",
     "pretty-ms": "^3.0.0",
