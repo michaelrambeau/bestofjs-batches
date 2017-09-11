@@ -20,6 +20,7 @@ const processProject = options => async project => {
     logger
   })
   let updated = false
+  project.github = Object.assign({}, githubData, { topics })
   if (created) {
     // Update `trends.daily` if a snapshot has been saved
     project.trends = updateDailyTrendsIfNeeded(project, previous, options)
@@ -28,7 +29,6 @@ const processProject = options => async project => {
     logger.debug('STEP 4: update project record from Github data', {
       githubData
     })
-    project.github = Object.assign({}, githubData, { topics })
     try {
       await project.save()
       logger.verbose('Project saved!', project.toString())
