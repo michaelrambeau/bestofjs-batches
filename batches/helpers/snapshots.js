@@ -40,7 +40,6 @@ function getLastSnapshot(project, options) {
     .sort({
       createdAt: -1
     })
-    .then(doc => doc.toObject())
 }
 
 // INPUT: a snapshot record
