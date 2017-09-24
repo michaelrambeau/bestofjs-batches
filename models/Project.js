@@ -32,7 +32,9 @@ fields = {
     branch: String,
     packageJson: Boolean,
     owner_id: Number,
-    topics: Array
+    topics: Array,
+    commit_count: Number,
+    contributor_count: Number
   },
   npm: {
     name: String,

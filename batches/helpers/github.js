@@ -39,13 +39,50 @@ const githubHelpers = {
       .full_name}/${branch}/package.json`
     return fetch(url).then(r => r.json())
   },
-  getTopics: function(full_name) {
-    return scrapeIt(`https://github.com/${full_name}`, {
+  // Scrape the GitHub project page to get data we cannot retrieve easily from the API!
+  // Note added in 2017/09: `topics` be accessed from the API!
+  getScrapingData: async function(full_name, options) {
+    const { logger } = options
+    const url = `https://github.com/${full_name}`
+    logger.debug('Scraping the page', { url })
+    const results = await scrapeIt(url, {
       topics: {
         listItem: '#topics-list-container a'
+      },
+      commit_count: {
+        selector: '.numbers-summary .commits .num.text-emphasized',
+        convert: toInteger
+      },
+      contributors: {
+        selector: '.overall-summary li:nth-child(4) .num.text-emphasized',
+        convert: toInteger
       }
     })
+    const { contributor_count } = results.contributors
+      ? { contributor_count: results.contributors }
+      : await fetchContributorCount(full_name, options)
+    return Object.assign({}, results, { contributor_count })
   }
+}
+
+// Convert a String from the web page E.g. `1,300` into an Integer
+const toInteger = source => {
+  const onlyNumbers = source.replace(/[^\d]/, '')
+  return !onlyNumbers || isNaN(onlyNumbers) ? 0 : parseInt(onlyNumbers, 10)
+}
+
+// Note about how GitHub page works (Sep. 2017): for projects that are not very popular,
+// The contributor count is dynamically fetch using an Ajax request, when the page loads.
+function fetchContributorCount(full_name, options) {
+  const url = `https://github.com/${full_name}/contributors_size`
+  const { logger } = options
+  logger.info('Fetching contributor count...', { full_name })
+  return scrapeIt(url, {
+    contributor_count: {
+      selector: '.num.text-emphasized',
+      convert: toInteger
+    }
+  })
 }
 
 module.exports = githubHelpers
