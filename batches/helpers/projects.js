@@ -92,7 +92,8 @@ function createSuperproject(project, report) {
     // The Github topics are coming soon!
     // topics: project.github.topics
     //   .filter(topic => topic !== 'javascript'),
-    tags: _.pluck(project.tags, 'code')
+    tags: _.pluck(project.tags, 'code'),
+    contributor_count: project.github.contributor_count
   }
 
   // Add Github default branch only if it's different from `master`
@@ -104,13 +105,8 @@ function createSuperproject(project, report) {
   // Add npm data if available
   if (project.npm && project.npm.name) {
     data.npm = project.npm.name
-    data.quality = project.packagequality.quality || 0
     data.version = project.npm.version
-  }
-
-  // Add data from npms.io API
-  if (project.npms && project.npms.score) {
-    data.score = project.npms.score.final || 0
+    data.dependency_count = project.npm.dependencies.length
   }
 
   // Project custom URL (will be displayed instead of Github owner's avatar)
