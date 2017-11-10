@@ -6,7 +6,8 @@ const createSuperproject = helpers.createSuperproject
 
 const getSnapshotData = require('./get-snapshot-data')
 const getTags = require('./get-tags')
-const write = require('./save-json')
+const save = require('./save-json')
+const buildCompactList = require('./build-stateofjs-list')
 
 async function start(options) {
   const { logger } = options
@@ -42,8 +43,8 @@ async function start(options) {
   const filteredProjects = superprojects
     .filter(item => !!item) // remove null items that might be created if error occurred
     .filter(project => project.deltas.length > 0)
-  const json = { tags, projects: filteredProjects }
-  await write(json)
+  const json = { date: new Date(), tags, projects: filteredProjects }
+  await save(json, 'projects.json')
   const meta = Object.assign({}, result.meta, {
     message: 'JSON file created',
     tags: json.tags.length,
@@ -51,7 +52,16 @@ async function start(options) {
     date: json.date
   })
   const finalResult = { meta }
+
+  // STEP 4
+  await buildAndSaveCompactList(json)
+
   return finalResult
+}
+
+function buildAndSaveCompactList(json) {
+  const compactJson = buildCompactList(json)
+  return save(compactJson, 'stateofjs2017.json')
 }
 
 module.exports = start

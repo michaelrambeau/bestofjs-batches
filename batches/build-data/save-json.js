@@ -1,9 +1,9 @@
 const fs = require('fs-extra')
 const path = require('path')
 
-function write(json) {
-  json.date = new Date()
-  const filepath = path.join(process.cwd(), 'build', 'projects.json')
+function save(json, filename) {
+  const filepath = path.join(process.cwd(), 'build', filename)
   return fs.outputJson(filepath, json)
 }
-module.exports = write
+
+module.exports = save

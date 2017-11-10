@@ -75,6 +75,13 @@ function getProjects(options) {
     .limit(options.limit)
 }
 
+const getProjectHomepage = project => {
+  const homepage = project.github.homepage
+  // npm package page is not a valid homepage!
+  const isValid = url => !/npmjs\.com/.test(url) && !/npm\.im/.test(url)
+  return homepage && isValid(homepage) ? homepage : project.url
+}
+
 // Return the JSON object to save later in the filesystem
 function createSuperproject(project, report) {
   var data = {
@@ -82,7 +89,7 @@ function createSuperproject(project, report) {
     stars: report.stars,
     deltas: report.deltas.slice(0, 7),
     monthly: report.monthlyTrends,
-    url: project.github.homepage ? project.github.homepage : '',
+    url: getProjectHomepage(project),
     full_name: project.github.full_name, // 'strongloop/express' for example.
     description: project.github.description
       ? project.github.description
