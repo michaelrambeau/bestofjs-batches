@@ -76,7 +76,7 @@ const toInteger = source => {
 function fetchContributorCount(full_name, options) {
   const url = `https://github.com/${full_name}/contributors_size`
   const { logger } = options
-  logger.info('Fetching contributor count...', { full_name })
+  logger.debug('Fetching contributor count...', { full_name })
   return scrapeIt(url, {
     contributor_count: {
       selector: '.num.text-emphasized',

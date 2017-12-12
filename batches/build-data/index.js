@@ -7,7 +7,8 @@ const createSuperproject = helpers.createSuperproject
 const getSnapshotData = require('./get-snapshot-data')
 const getTags = require('./get-tags')
 const save = require('./save-json')
-const buildCompactList = require('./build-stateofjs-list')
+const buildCompactList = require('./stateofjs/build-stateofjs-list')
+const stateofjsList = require('./stateofjs/stateofjs2017.json')
 
 async function start(options) {
   const { logger } = options
@@ -54,13 +55,15 @@ async function start(options) {
   const finalResult = { meta }
 
   // STEP 4
-  await buildAndSaveCompactList(json)
-
+  await buildAndSaveCompactList({ json, logger })
   return finalResult
 }
 
-function buildAndSaveCompactList(json) {
-  const compactJson = buildCompactList(json)
+function buildAndSaveCompactList({ json, logger }) {
+  const compactJson = buildCompactList({ fullList: json, stateofjsList })
+  logger.info('State of JavaScript JSON file created!', {
+    count: compactJson.count
+  })
   return save(compactJson, 'stateofjs2017.json')
 }
 
