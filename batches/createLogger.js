@@ -12,7 +12,7 @@ const options = {
   level: 'warn'
 }
 
-function createLogger({ level = 'info' } = {}) {
+function createLogger({ level = 'verbose' } = {}) {
   const logger = new winston.Logger({
     level: level,
     json: true,
