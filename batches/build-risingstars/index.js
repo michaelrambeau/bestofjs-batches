@@ -58,7 +58,7 @@ async function start(options) {
 function createFinalJSON(results) {
   const projects = results
     .filter(item => !!item)
-    .filter(project => project.delta > 600)
+    .filter(project => project.delta > 1000) // limit to projects that got more than 1K stars
   return {
     date: new Date(),
     count: projects.length,
