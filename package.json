@@ -25,6 +25,7 @@
     "firebase-tools": "3.2.2",
     "fs-extra": "^4.0.1",
     "lodash": "3.10.1",
+    "lodash.get": "^4.4.2",
     "minimist": "1.2.0",
     "moment": "2.10.6",
     "moment-timezone": "^0.5.13",

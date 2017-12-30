@@ -14,6 +14,7 @@ const updateNpmData = require('./update-npm-data')
 const updateHoF = require('./hof')
 const dailyDatabaseProcess = require('./daily-database-process')
 const initTrends = require('./trends')
+const buildRisingStars = require('./build-risingstars')
 
 const argv = minimist(process.argv.slice(2))
 const options = getOptions(argv)
@@ -71,7 +72,8 @@ const handlers = {
   hof: updateHoF,
   npm: updateNpmData,
   'daily-database-process': dailyDatabaseProcess,
-  trends: initTrends
+  trends: initTrends,
+  risingstars: buildRisingStars
 }
 
 async function startBatch(key, options) {
