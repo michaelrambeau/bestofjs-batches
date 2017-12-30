@@ -1,5 +1,4 @@
 const Promise = require('bluebird')
-const { pluck } = require('lodash')
 const prettyMs = require('pretty-ms')
 
 // INPUT:
@@ -99,7 +98,7 @@ function createSuperproject(project, report) {
     // The Github topics are coming soon!
     // topics: project.github.topics
     //   .filter(topic => topic !== 'javascript'),
-    tags: _.pluck(project.tags, 'code'),
+    tags: project.tags.map(project => project.code),
     contributor_count: project.github.contributor_count
   }
 

@@ -126,5 +126,17 @@
   "parcel-bundler/parcel": {
     "stars": 0,
     "createdAt": "2017-01-01T00:00:00.000Z"
+  },
+  "purescript/purescript": {
+    "stars": 3120,
+    "createdAt": "2016-01-16T00:00:00.000Z"
+  },
+  "elm-lang/elm-compiler": {
+    "stars": 3360,
+    "createdAt": "2016-12-10T00:00:00.000Z"
+  },
+  "clojure/clojurescript": {
+    "stars": 6410,
+    "createdAt": "2016-12-04T00:00:00.000Z"
   }
 }

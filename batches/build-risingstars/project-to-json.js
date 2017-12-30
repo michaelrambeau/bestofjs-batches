@@ -1,5 +1,3 @@
-const { pluck } = require('lodash')
-
 const getProjectHomepage = project => {
   const homepage = project.github.homepage
   // npm package page is not a valid homepage!
@@ -16,9 +14,11 @@ function projectToJSON({ project, report }) {
     description: description.slice(0, 100),
     // pushed_at: project.github.pushed_at,
     owner_id: project.github.owner_id,
-    tags: _.pluck(project.tags, 'code'),
+    tags: project.tags.map(project => project.code),
     // contributor_count: project.github.contributor_count,
-    delta: report.delta
+    delta: report.delta,
+    stars: project.github.stargazers_count,
+    created_at: project.created_at
   }
   // Project custom URL (will be displayed instead of Github owner's avatar)
   if (project.icon && project.icon.url) {

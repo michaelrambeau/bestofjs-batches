@@ -73,8 +73,8 @@ function parseGithubData(data) {
       ]),
     json =>
       Object.assign({}, json, {
-        owner_id: get(json, 'owner.id'),
-        branch: get(json, 'default_branch')
+        owner_id: get(data, 'owner.id'),
+        branch: get(data, 'default_branch')
       })
   ])(data)
 }
