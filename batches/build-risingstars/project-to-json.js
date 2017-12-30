@@ -1,4 +1,4 @@
-const _ = require('lodash')
+const { pluck } = require('lodash')
 
 const getProjectHomepage = project => {
   const homepage = project.github.homepage

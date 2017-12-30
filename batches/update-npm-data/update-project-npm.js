@@ -1,5 +1,4 @@
-const _ = require('lodash')
-const { mapValues } = _
+const { mapValues } = require('lodash')
 const npm = require('../helpers/npm')
 
 const processProject = options => async project => {

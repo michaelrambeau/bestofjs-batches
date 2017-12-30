@@ -1,5 +1,5 @@
 const Promise = require('bluebird')
-const _ = require('lodash')
+const { pluck } = require('lodash')
 const prettyMs = require('pretty-ms')
 
 // INPUT:

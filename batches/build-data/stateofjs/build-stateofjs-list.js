@@ -1,5 +1,5 @@
 const slugify = require('./slugify')
-const flatten = require('lodash').flatten
+const { flatten } = require('lodash')
 
 const processStateOfJSProject = fullList => stateOfJSProject => {
   const fullProject = fullList.projects.find(

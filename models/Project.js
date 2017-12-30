@@ -34,7 +34,8 @@ fields = {
     owner_id: Number,
     topics: Array,
     commit_count: Number,
-    contributor_count: Number
+    contributor_count: Number,
+    created_at: Date
   },
   npm: {
     name: String,

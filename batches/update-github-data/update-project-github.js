@@ -1,4 +1,4 @@
-const { pick, get } = require('lodash')
+const { pick, get, flow } = require('lodash')
 
 const { getScrapingData, getRepoData } = require('../helpers/github')
 const { getLastSnapshot, isTodaySnapshot } = require('../helpers/snapshots')
@@ -59,20 +59,24 @@ function getGithubData(project) {
   return getRepoData(project).then(parseGithubData)
 }
 
-function parseGithubData(json) {
-  const result1 = pick(json, [
-    'name',
-    'full_name',
-    'description',
-    'homepage',
-    'stargazers_count',
-    'pushed_at'
-  ])
-  const result2 = Object.assign({}, result1, {
-    owner_id: get(json, 'owner.id'),
-    branch: get(json, 'default_branch')
-  })
-  return result2
+function parseGithubData(data) {
+  return flow([
+    json =>
+      pick(json, [
+        'name',
+        'full_name',
+        'description',
+        'homepage',
+        'stargazers_count',
+        'pushed_at',
+        'created_at'
+      ]),
+    json =>
+      Object.assign({}, json, {
+        owner_id: get(json, 'owner.id'),
+        branch: get(json, 'default_branch')
+      })
+  ])(data)
 }
 
 async function takeSnapshotIfNeeded(project, stars, options) {

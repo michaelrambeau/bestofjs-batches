@@ -1,5 +1,5 @@
 const moment = require('moment')
-const get = require('lodash.get')
+const { get } = require('lodash')
 
 const helpers = require('../build-data/functions')
 const createAllPoints = helpers.createAllPoints
