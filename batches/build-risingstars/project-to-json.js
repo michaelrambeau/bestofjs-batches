@@ -7,6 +7,7 @@ const getProjectHomepage = project => {
 
 function projectToJSON({ project, report }) {
   const description = project.github.description || project.description
+  const stars = project.github.stargazers_count
   const data = {
     name: project.name, // Project name entered in the application (not the one from Github)
     url: getProjectHomepage(project),
@@ -17,8 +18,12 @@ function projectToJSON({ project, report }) {
     tags: project.tags.map(project => project.code),
     // contributor_count: project.github.contributor_count,
     delta: report.delta,
-    stars: project.github.stargazers_count,
-    created_at: project.github.created_at
+    stars,
+    created_at: project.github.created_at,
+    twitter: project.twitter
+  }
+  if (report.monthly) {
+    data.monthly = report.monthly.map(item => item.delta)
   }
   // Project custom URL (will be displayed instead of Github owner's avatar)
   if (project.icon && project.icon.url) {

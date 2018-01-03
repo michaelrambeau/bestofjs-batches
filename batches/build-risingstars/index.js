@@ -2,9 +2,8 @@ const path = require('path')
 const fs = require('fs-extra')
 
 const helpers = require('../helpers/projects')
-const { processAllProjects, getProjects, createSuperproject } = helpers
-const getYearlyData = require('./get-yearly-delta')
-const projectToJSON = require('./project-to-json')
+const { processAllProjects, getProjects } = helpers
+const processProject = require('./process-project')
 
 const year = 2017
 
@@ -21,44 +20,27 @@ async function start(options) {
       project: searchOptions
     })
   )
-
-  const processProject = async project => {
-    const opts = {
+  const result = await processAllProjects(
+    projects,
+    processProject({
+      year,
       Snapshot: options.models.Snapshot,
       debug: options.debug,
       logger
+    }),
+    {
+      logger
     }
-    const yearlyData = await getYearlyData({ project, options: opts, year })
-    if (!yearlyData) throw new Error(`No snapshot data!`)
-    const { first, last } = yearlyData
-    const report = {
-      first,
-      last,
-      delta: last.stars - first.stars,
-      days: parseInt((last.date - first.date) / 1000 / 60 / 60 / 24)
-    }
-    logger.debug({
-      project: project.name,
-      first: report.first,
-      delta: report.delta,
-      days: report.days
-    })
-    const updatedProject = projectToJSON({ project, report })
-    return {
-      meta: { success: true },
-      data: updatedProject
-    }
-  }
-  const result = await processAllProjects(projects, processProject, { logger })
+  )
   const json = createFinalJSON(result.data)
-  await save(json, 'project.json')
+  await save(json, 'projects.json')
   return result
 }
 
 function createFinalJSON(results) {
   const projects = results
     .filter(item => !!item)
-    .filter(project => project.delta > 1000) // limit to projects that got more than 1K stars
+    .filter(project => project.delta > 1000 || project.stars > 10000) // limit to projects that got more than 1K stars
   return {
     date: new Date(),
     count: projects.length,
