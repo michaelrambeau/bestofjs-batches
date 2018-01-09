@@ -9,18 +9,20 @@ const processProject = ({ year, Snapshot, debug, logger }) => async project => {
     logger
   }
   const yearlyData = await getYearlyData({ project, options: opts, year })
+  // if (!yearlyData) throw new Error('No snapshot data!')
+  if (!yearlyData) return { meta: { ignored: true } }
   const { first, last } = yearlyData
+  logger.debug(`Yearly data for ${project.name}`, { first, last })
   const delta = last.stars - first.stars
   const monthlyDeltas =
-    delta > 1000 &&
+    (delta > 1000 || project.github.stargazers_count > 10000) &&
     (await fetchMonthlyDeltas({
       project,
-      year: 2018,
+      year: year + 1,
       month: 1,
       Snapshot,
       logger
     }))
-  if (!yearlyData) throw new Error('No snapshot data!')
   const report = {
     first,
     last,

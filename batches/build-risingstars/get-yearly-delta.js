@@ -17,7 +17,6 @@ const startDate = new Date()
 // - deltas: daily star variations
 async function getYearlyDelta({ project, year, options }) {
   const { logger, Snapshot } = options
-  logger.debug('getSnapshotData', project.name)
   const queries = [
     getFirstSnapshot({ Snapshot, project, year }),
     getLastSnapshot({ Snapshot, project, year })
@@ -56,10 +55,9 @@ function getFirstSnapshot({ Snapshot, year, project }) {
     .limit(1)
     .lean()
 }
-function getOldestSnapshot(params) {}
 
 function getLastSnapshot({ Snapshot, year, project }) {
-  const d = new Date(year + 1, 0, 1)
+  const d = new Date(`${year + 1}-01-01T21:00:00.000Z`)
   return Snapshot.findOne()
     .where('project')
     .equals(project._id)

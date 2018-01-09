@@ -10,6 +10,9 @@ fields = {
   },
   createdAt: {
     type: Date
+  },
+  insertedAt: {
+    type: Date
   }
 }
 
