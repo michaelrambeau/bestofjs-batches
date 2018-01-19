@@ -73,6 +73,15 @@ schema.methods.toString = function() {
   return `Project ${this.name} ${this._id}`
 }
 
+// For some projects, don't use the GitHub description that is not really relevant
+schema.methods.getDescription = function() {
+  const { full_name, description } = this.github
+  const overrideDescriptionList = ['apache/incubator-weex']
+  const isNotRelevant = overrideDescriptionList.includes(full_name)
+  const overrideGithubDescription = isNotRelevant || !description
+  return overrideGithubDescription ? this.description : description
+}
+
 model = mongoose.model('Project', schema)
 
 module.exports = model

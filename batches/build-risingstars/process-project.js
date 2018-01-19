@@ -15,7 +15,7 @@ const processProject = ({ year, Snapshot, debug, logger }) => async project => {
   logger.debug(`Yearly data for ${project.name}`, { first, last })
   const delta = last.stars - first.stars
   const monthlyDeltas =
-    (delta > 1000 || project.github.stargazers_count > 10000) &&
+    (delta > 800 || project.github.stargazers_count > 10000) &&
     (await fetchMonthlyDeltas({
       project,
       year: year + 1,

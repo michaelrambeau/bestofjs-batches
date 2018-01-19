@@ -138,5 +138,9 @@
   "clojure/clojurescript": {
     "stars": 6410,
     "createdAt": "2016-12-04T00:00:00.000Z"
+  },
+  "react-navigation/react-navigation": {
+    "stars": 0,
+    "createdAt": "2016-12-30T00:00:00.000Z"
   }
 }

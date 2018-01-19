@@ -6,7 +6,7 @@ const getProjectHomepage = project => {
 }
 
 function projectToJSON({ project, report }) {
-  const description = project.github.description || project.description
+  const description = project.getDescription()
   const stars = project.github.stargazers_count
   const data = {
     name: project.name, // Project name entered in the application (not the one from Github)
