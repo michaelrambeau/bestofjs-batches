@@ -5,6 +5,7 @@ mongoose = require('mongoose')
 fields = {
   name: String,
   code: String,
+  description: String,
   createdAt: {
     type: Date
   }

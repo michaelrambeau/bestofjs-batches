@@ -5,6 +5,7 @@ function getTags(options, cb) {
   var fields = {
     code: 1,
     name: 1,
+    description: 1,
     _id: 0 // required to omit _id field
   }
   return model.find({}, fields).sort({ name: 1 })
