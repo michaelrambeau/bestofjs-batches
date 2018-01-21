@@ -4,7 +4,8 @@
   "description": "bestof.js.org batches (scheduled tasks)",
   "main": "index.js",
   "scripts": {
-    "daily": "node batches daily-database-process && npm run deploy:prod && npm run notify",
+    "daily":
+      "node batches daily-database-process && npm run deploy:prod && npm run notify",
     "deploy:prod": "firebase deploy --project prod",
     "deploy:dev": "firebase deploy --project dev",
     "notify": "node batches/send-daily-notification",
@@ -26,7 +27,7 @@
     "fs-extra": "^4.0.1",
     "lodash": "4.17.4",
     "minimist": "1.2.0",
-    "moment": "2.10.6",
+    "moment": "2.11.2",
     "moment-timezone": "^0.5.13",
     "mongoose": "4.11.7",
     "node-fetch": "^1.7.2",
