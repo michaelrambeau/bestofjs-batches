@@ -11,7 +11,7 @@ if [ "$SOURCE" == "scheduler" ] || [ "$SOURCE" == "manual" ] ; then
     echo "Launching the daily build..."
     npm run daily
   fi
-  if [ "BRANCH" == "npm" ]; then
+  if [ "$BRANCH" == "npm" ] ; then
     # Specific script on `npm` branch
     # https://semaphoreci.com/docs/running-build-command-on-specific-branch.html
     echo "Launching the `npm` script to update the database"
