@@ -1,3 +1,7 @@
+/*
+Daily script to update all projects from data related to npm
+Launched by the command: `node batches update-npm-projects`
+*/
 const updateProject = require('./update-project-npm')
 const { processAllProjects, getProjects } = require('../../helpers/projects')
 
