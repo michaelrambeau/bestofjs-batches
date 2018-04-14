@@ -6,6 +6,8 @@
   "scripts": {
     "daily":
       "node batches daily-database-process && npm run deploy:prod && npm run notify",
+    "daily-npm-update":
+      "node batches update-from-npm-projects && node batches update-from-npm-projects",
     "deploy:prod": "firebase deploy --project prod",
     "deploy:dev": "firebase deploy --project dev",
     "notify": "node batches/send-daily-notification",

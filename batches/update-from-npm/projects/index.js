@@ -1,7 +1,5 @@
 const updateProject = require('./update-project-npm')
-const helpers = require('../helpers/projects')
-const processAllProjects = helpers.processAllProjects
-const getProjects = helpers.getProjects
+const { processAllProjects, getProjects } = require('../../helpers/projects')
 
 async function start(options) {
   const { logger } = options

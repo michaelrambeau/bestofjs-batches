@@ -10,12 +10,14 @@ mongoose.Promise = require('bluebird')
 const batchTest = require('./batch-test')
 const buildData = require('./build-data')
 const updateGithubData = require('./update-github-data')
-const updateNpmData = require('./update-npm-data')
 const updateHoF = require('./hof')
 const dailyDatabaseProcess = require('./daily-database-process')
 const initTrends = require('./trends')
 const buildRisingStars = require('./build-risingstars')
 const addMissingSnapshots = require('./add-missing-snapshots')
+// npm branch daily scripts
+const updateNpmData = require('./update-from-npm/projects')
+const updateHoFNpmData = require('./update-from-npm/hof')
 
 const argv = minimist(process.argv.slice(2))
 const options = getOptions(argv)
@@ -71,7 +73,8 @@ const handlers = {
   github: updateGithubData,
   build: buildData,
   hof: updateHoF,
-  npm: updateNpmData,
+  'update-from-npm-projects': updateNpmData,
+  'update-from-npm-hof': updateHoFNpmData,
   'daily-database-process': dailyDatabaseProcess,
   trends: initTrends,
   risingstars: buildRisingStars,

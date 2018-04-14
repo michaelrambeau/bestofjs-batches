@@ -15,7 +15,7 @@ if [ "$SOURCE" == "scheduler" ] || [ "$SOURCE" == "manual" ] ; then
     # Specific script on `npm` branch
     # https://semaphoreci.com/docs/running-build-command-on-specific-branch.html
     echo "Launching the `npm` script to update the database"
-    node batches npm
+    npm run daily-npm-update
   fi
 else
   echo "No daily build script to launch."

@@ -29,8 +29,9 @@ const schema = new mongoose.Schema(fields, {
 })
 
 schema.methods.toString = function() {
-  return `${this.github.login} (${this.github.name}) ${this.github
-    .followers} followers, ${this.npm.count} modules, ${this.projects} projects`
+  return `${this.github.login} (${this.github.name}) ${
+    this.github.followers
+  } followers, ${this.npm.count} packages`
 }
 
 const model = mongoose.model('Hero', schema)

@@ -15,8 +15,9 @@ function convertHeroProjects(hero) {
 
 async function main(options) {
   const model = options.models.Hero
-  const { logger, concurrency = 20 } = options
+  const { logger, concurrency = 5 } = options
   const docs = await model
+    // .find({ _id: '572add97933a9a1100587ee5' })
     .find()
     .populate({ path: 'projects', select: 'name' })
     .sort({ 'github.followers': -1 })

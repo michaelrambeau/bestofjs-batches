@@ -1,10 +1,8 @@
 const github = require('../helpers/github')
-const getNpmData = require('./getNpmData')
 
 // Fields to copy from Github API response
 const fields = {
-  github: ['name', 'avatar_url', 'followers', 'blog'],
-  npm: ['username', 'count']
+  github: ['name', 'avatar_url', 'followers', 'blog']
 }
 
 function processHero(hero, options) {
@@ -13,13 +11,7 @@ function processHero(hero, options) {
   try {
     logger.debug('Processing the hero', hero.toString())
     const githubData = github.getUserData(login)
-    // A dash in the npm means username means that I did not found the guy on npm
-    // No need to trigger invalid requests everyday
-    const npmData =
-      hero.npm.username === '-'
-        ? Promise.resolve({ username: '-', count: 0 })
-        : getNpmData(hero.npm.username || login.toLowerCase())
-    return Promise.all([githubData, npmData]).then(result => {
+    return Promise.all([githubData]).then(result => {
       const json = {
         github: result[0],
         npm: result[1]
