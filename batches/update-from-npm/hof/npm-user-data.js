@@ -1,8 +1,9 @@
 const scrapeIt = require('scrape-it')
 
-module.exports = function getNpmData(username) {
+async function getNpmData(npmUsername) {
   const t = +new Date()
-  return scrapeIt(`https://www.npmjs.com/~${username}?t=${t}`, {
+  const url = `https://www.npmjs.com/~${npmUsername}?t=${t}`
+  const { username, count } = await scrapeIt(url, {
     username: {
       selector: 'h2',
       eq: 0, // First <h2> in the page
@@ -13,6 +14,9 @@ module.exports = function getNpmData(username) {
       convert: getCount
     }
   })
+  if (npmUsername !== username)
+    throw new Error(`Unable to scrape ${npmUsername} page correctly`)
+  return { count }
 }
 
 function getCount(text) {
@@ -21,3 +25,5 @@ function getCount(text) {
   const count = a[1]
   return parseInt(count, 10)
 }
+
+module.exports = getNpmData

@@ -22,11 +22,11 @@ async function launchHeroesBatch(processHeroFn, options) {
     }
   )
   const reducer = (acc, val) => ({
-    processed: acc.processed + val.meta.processed ? 1 : 0,
-    saved: acc.saved + val.meta.saved ? 1 : 0,
-    error: acc.error + val.meta.error ? 1 : 0
+    processed: acc.processed + (val.meta.processed ? 1 : 0),
+    saved: acc.saved + (val.meta.saved ? 1 : 0),
+    error: acc.error + (val.meta.error ? 1 : 0)
   })
-  return { meta: results.reduce(reducer, { processed: 0, saved: 0 }) }
+  return { meta: results.reduce(reducer, { processed: 0, saved: 0, error: 0 }) }
 }
 
 module.exports = launchHeroesBatch
