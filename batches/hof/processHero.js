@@ -1,38 +1,23 @@
 const github = require('../helpers/github')
 
-// Fields to copy from Github API response
-const fields = {
-  github: ['name', 'avatar_url', 'followers', 'blog']
-}
+const logHero = hero => Object.assign({}, hero.github, hero.npm)
 
-function processHero(hero, options) {
-  const { logger } = options
+async function processHero(hero, options) {
+  const { logger, models } = options
+  const model = models.Hero
   const login = hero.github.login
   try {
-    logger.debug('Processing the hero', hero.toString())
-    const githubData = github.getUserData(login)
-    return Promise.all([githubData]).then(result => {
-      const json = {
-        github: result[0],
-        npm: result[1]
-      }
-      let nbUpdate = 0
-      Object.keys(fields).forEach(key =>
-        fields[key].forEach(fieldName => {
-          const value = json[key][fieldName]
-          if (value !== hero[key][fieldName]) nbUpdate++
-          hero[key][fieldName] = value
-        })
-      )
-      if (nbUpdate === 0) {
-        logger.verbose('Db already up-to-date', hero.toString())
-        return aggregateHeroData(hero, { saved: false, processed: true })
-      }
-      logger.debug(`${nbUpdate} field(s) to update'`, hero.toString())
-      hero.save()
-      logger.verbose('Hero saved!', hero.toString())
-      return aggregateHeroData(hero, { saved: true, processed: true })
-    })
+    const githubData = await github.getUserData(login)
+    const updatedHero = Object.assign({}, hero, { github: githubData })
+    const result = await model.update({ _id: hero._id }, updatedHero)
+    const saved = result.nModified > 0
+    if (saved) {
+      logger.verbose('Db already up-to-date', logHero(hero))
+      return aggregateHeroData(hero, { saved: false, processed: true })
+    }
+    await model.update({ _id: hero._id }, updatedHero)
+    logger.verbose('Hero saved!', logHero(hero))
+    return aggregateHeroData(hero, { saved: true, processed: true })
   } catch (err) {
     logger.error(`Unable to save the hero ${login} ${err.message}`)
     return aggregateHeroData(hero, { error: true, processed: true })

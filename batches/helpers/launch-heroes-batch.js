@@ -1,16 +1,22 @@
+/*
+Launch the given `processHeroFn` function on all `Hero` documents
+Helper used by the 2 following batches:
+- `update-update-from-npm-hof`
+- `hof`
+`processHeroFn` must return an object with the shape: {payload, meta}
+*/
 const Promise = require('bluebird')
 
-// Launch the given `processHero` function on all `Hero` documents
 async function launchHeroesBatch(processHeroFn, options) {
   const model = options.models.Hero
-  const { logger, concurrency = 5 } = options
+  const { logger, concurrency = 20 } = options
   const heroes = await model
     .find()
     .populate({ path: 'projects', select: 'name' })
     .sort({ 'github.followers': -1 })
     .limit(options.limit)
     .lean()
-  logger.info(heroes.length, 'heroes to process...')
+  logger.info('Heroes to process...', { count: heroes.length, concurrency })
   const results = await Promise.map(
     heroes,
     hero => {
@@ -26,7 +32,10 @@ async function launchHeroesBatch(processHeroFn, options) {
     saved: acc.saved + (val.meta.saved ? 1 : 0),
     error: acc.error + (val.meta.error ? 1 : 0)
   })
-  return { meta: results.reduce(reducer, { processed: 0, saved: 0, error: 0 }) }
+  return {
+    payload: results.map(item => item.payload),
+    meta: results.reduce(reducer, { processed: 0, saved: 0, error: 0 })
+  }
 }
 
 module.exports = launchHeroesBatch

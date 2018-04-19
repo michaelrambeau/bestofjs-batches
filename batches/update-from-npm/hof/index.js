@@ -2,7 +2,7 @@
 Daily script to update all Hall of Fame members (the "heroes") from data related to npm
 Launched by the command: `node batches update-npm-hof`
 */
-const launchHeroesBatch = require('./launch-heroes-batch')
+const launchHeroesBatch = require('../../helpers/launch-heroes-batch')
 const updateHeroNpmData = require('./update-hero-npm-data')
 
 async function processHero(hero, options) {
