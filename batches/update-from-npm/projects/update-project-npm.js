@@ -5,9 +5,7 @@ const processProject = options => async project => {
   const { logger } = options
   logger.debug('STEP1: get data from npm registry')
   const npmData = await getNpmData(project)
-  logger.debug('STEP2: get data from packagequality.com')
-  const packagequalityData = await getPackageQualityData(project)
-  logger.debug('STEP3: get data npms.io')
+  logger.debug('STEP2: get data npms.io')
   const npmsData = await npm.getNpmsData(project.npm.name)
   const npmsScore = npmsData.score
   const score = {
@@ -16,7 +14,6 @@ const processProject = options => async project => {
   }
   if (npmData) project.npm = npmData // Update `npm` object only if we get data from the STEP1
   project.npms = { score }
-  project.packagequality = packagequalityData
   await project.save()
   logger.debug('Project saved!', project.toString())
   return { meta: { updated: true } }
