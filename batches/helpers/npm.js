@@ -21,9 +21,11 @@ function getNpmsData(packageName) {
   const url = `https://api.npms.io/v2/package/${encodeURIComponent(
     packageName
   )}`
-  return fetch(url).then(r => r.json()).catch(() => {
-    throw new Error(`Invalid response from ${url}`)
-  })
+  return fetch(url)
+    .then(r => r.json())
+    .catch(() => {
+      throw new Error(`Invalid response from ${url}`)
+    })
 }
 
 function formatDependencies(dependencies) {
@@ -45,9 +47,28 @@ function parsePackageName(packageName) {
   }
 }
 
+function getBundleData(packageName) {
+  const url = `https://bundlephobia.com/api/size?package=${encodeURIComponent(
+    packageName
+  )}`
+  const headers = {
+    'x-bundlephobia-user': 'bestofjs.com'
+  }
+  const options = {
+    headers
+  }
+  return fetch(url, options)
+    .then(r => r.json())
+    .catch(() => {
+      // Internal Server Errors (no valid JSON)
+      throw new Error(`Invalid response from ${url}`)
+    })
+}
+
 module.exports = {
   getNpmRegistryData,
   getPackageQualityData,
   getNpmsData,
-  formatDependencies
+  formatDependencies,
+  getBundleData
 }

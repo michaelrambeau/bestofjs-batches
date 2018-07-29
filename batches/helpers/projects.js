@@ -65,8 +65,7 @@ const metaReducer = (acc, val) =>
 function getProjects(options) {
   const { logger } = options
   logger.debug('Searching', options.project)
-  return options.Project
-    .find(options.project)
+  return options.Project.find(options.project)
     .populate('tags')
     .sort({
       createdAt: 1
@@ -118,6 +117,9 @@ function createSuperproject(project, report) {
   // Project custom URL (will be displayed instead of Github owner's avatar)
   if (project.icon && project.icon.url) {
     data.icon = project.icon.url
+  }
+  if (project.bundle && project.bundle.gzip) {
+    data.gzip = project.bundle.gzip
   }
 
   return data

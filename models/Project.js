@@ -42,6 +42,14 @@ fields = {
     version: String,
     dependencies: [String]
   },
+  bundle: {
+    name: String,
+    dependencyCount: Number,
+    gzip: Number,
+    size: Number,
+    version: String,
+    errorMessage: String
+  },
   packagequality: {
     quality: Number
   },

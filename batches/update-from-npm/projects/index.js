@@ -9,7 +9,9 @@ async function start(options) {
   const { logger } = options
   const defaultSearchOptions = {
     deprecated: { $ne: true },
+    disabled: { $ne: true },
     'npm.name': { $ne: '' }
+    // 'bundle.name': { $exists: false }
   }
   const searchOptions = Object.assign({}, defaultSearchOptions, options.project)
   const projects = await getProjects(
@@ -19,7 +21,8 @@ async function start(options) {
     })
   )
   return await processAllProjects(projects, updateProject(options), {
-    logger
+    logger,
+    concurrency: 1
   })
 }
 
