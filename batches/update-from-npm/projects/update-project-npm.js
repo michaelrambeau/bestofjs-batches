@@ -23,7 +23,7 @@ const fetchNpmsData = ({ logger }) => async project => {
 
 const isBundleUpdateNeeded = project => {
   const isError = !!get(project.toObject(), 'bundle.errorMessage')
-  if (isError) return false // don't try to fetch data if there was an build previously
+  if (isError) return false // don't try to fetch data if there was a build error previously
   const projectJson = project.toObject()
   const npmVersion = get(projectJson, 'npm.version')
   const npmName = get(projectJson, 'npm.name')
@@ -67,8 +67,8 @@ const fetchBundleData = ({ logger }) => async project => {
 
 const updateProject = ({ logger }) => async project => {
   const updates = {
-    // npm: fetchNpmRegistryData,
-    // npms: fetchNpmsData,
+    npm: fetchNpmRegistryData,
+    npms: fetchNpmsData,
     bundle: fetchBundleData
   }
   const options = { concurrency: 1 }

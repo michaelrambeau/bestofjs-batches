@@ -22,7 +22,7 @@ async function start(options) {
   )
   return await processAllProjects(projects, updateProject(options), {
     logger,
-    concurrency: 1
+    concurrency: 5
   })
 }
 
