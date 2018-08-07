@@ -5,7 +5,7 @@ async function getNpmData(npmUsername) {
   const url = `https://www.npmjs.com/~${npmUsername}?t=${t}`
   const { username, count } = await scrapeIt(url, {
     username: {
-      selector: 'h2',
+      selector: 'main h2',
       eq: 0, // First <h2> in the page
       convert: x => (x === '?' ? '' : x)
     },
@@ -15,7 +15,7 @@ async function getNpmData(npmUsername) {
     }
   })
   if (npmUsername !== username)
-    throw new Error(`Unable to scrape ${npmUsername} page correctly`)
+    throw new Error(`Unable to scrape ${npmUsername} page correctly ${username}`)
   return { count }
 }
 

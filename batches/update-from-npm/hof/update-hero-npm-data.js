@@ -13,7 +13,9 @@ async function updateHeroNpmData(hero /*, options */) {
         ? hero.npm.username
         : login.toLowerCase()
     )
-    const updatedHero = merge({}, hero, { npm: npmData })
+    const updatedHero = merge({}, hero, {
+      npm: Object.assign(npmData, { updatedAt: new Date() })
+    })
     return updatedHero
   } catch (err) {
     throw new Error(

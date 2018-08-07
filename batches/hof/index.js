@@ -20,8 +20,12 @@ function getFollowers(hero) {
 
 async function main(options) {
   const { logger } = options
+  const sort = { 'github.followers': -1 }
   logger.info('Launching the Hall of Fame npm data batch')
-  const results = await launchHeroesBatch(processHero, options)
+  const results = await launchHeroesBatch(
+    processHero,
+    Object.assign({}, options, { sort })
+  )
   const heroes = results.payload
     .map(convertHeroProjects)
     .sort((a, b) => (getFollowers(a) > getFollowers(b) ? -1 : 1))

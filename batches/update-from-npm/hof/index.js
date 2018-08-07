@@ -13,7 +13,7 @@ async function processHero(hero, options) {
     const updatedHero = await updateHeroNpmData(hero, options)
     const result = await model.update({ _id: hero._id }, updatedHero)
     const saved = result.nModified > 0
-    logger.debug(saved ? 'Nothing to update' : 'Saved!', { hero: loggedHero })
+    logger.debug(saved ? 'Saved!' : 'Nothing to update', { hero: loggedHero })
     return {
       meta: { saved: result.nModified > 0, processed: true, error: false }
     }
@@ -28,7 +28,11 @@ async function main(options) {
   logger.info('Launching the Hall of Fame npm data batch')
   return launchHeroesBatch(
     processHero,
-    Object.assign({}, options, { concurrency: 1 }) // the scrapping does not work well if we increase the concurrency!
+    Object.assign({}, options, {
+      concurrency: 1,// the scrapping does not work well if we increase the concurrency!
+      limit: 30, // update only 30 heroes, they will be different everyday because of the sort criteria
+      sort: { 'npm.updatedAt': 1 }
+    })
   )
 }
 

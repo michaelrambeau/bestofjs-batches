@@ -13,7 +13,7 @@ async function launchHeroesBatch(processHeroFn, options) {
   const heroes = await model
     .find()
     .populate({ path: 'projects', select: 'name' })
-    .sort({ 'github.followers': -1 })
+    .sort(options.sort)
     .limit(options.limit)
     .lean()
   logger.info('Heroes to process...', { count: heroes.length, concurrency })

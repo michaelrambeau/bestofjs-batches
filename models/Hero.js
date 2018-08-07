@@ -4,6 +4,9 @@ const fields = {
   createdAt: {
     type: Date
   },
+  updatedAt: {
+    type: Date
+  },
   projects: [
     {
       type: mongoose.Schema.ObjectId,
@@ -20,7 +23,8 @@ const fields = {
   },
   npm: {
     count: Number,
-    username: String
+    username: String,
+    updatedAt: Date
   }
 }
 
