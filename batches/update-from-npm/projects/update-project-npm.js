@@ -65,11 +65,64 @@ const fetchBundleData = ({ logger }) => async project => {
   }
 }
 
+const isPackageSizeUpdateNeeded = ({ project, logger }) => {
+  const isError = !!get(project.toObject(), 'packageSize.errorMessage')
+  if (isError) {
+    logger.debug(
+      `Don't fetch package size data because of the previous error ${
+        project.name
+      }`
+    )
+    return false // don't try to fetch data if there was a build error previously
+  }
+  const projectJson = project.toObject()
+  const npmVersion = get(projectJson, 'npm.version')
+  const projectSizeVersion = get(projectJson, 'packageSize.version')
+  return npmVersion !== projectSizeVersion
+}
+
+const fetchPackageSizeData = ({ logger }) => async project => {
+  const version = get(project, 'npm.version')
+  if (!isPackageSizeUpdateNeeded({ project, logger })) {
+    logger.debug(`Package size data already up-to-date for ${project.name}`)
+    return null
+  }
+  logger.verbose('Fetch data about the package size', {
+    project: project.name,
+    version,
+    previousVersion: get(project, 'packageSize.version') || '(nothing)'
+  })
+  try {
+    const packageSizeData = await npm.getPackageSizeData(
+      project.npm.name,
+      version
+    )
+    const isError = !!packageSizeData.error
+    const packageSize = isError
+      ? { errorMessage: packageSizeData.error.message }
+      : {
+          publishSize: packageSizeData.publishSize,
+          installSize: packageSizeData.installSize,
+          version
+        }
+    logger.debug('Package size data to be saved', packageSize)
+    return Object.assign({}, packageSize, { updatedAt: new Date() })
+  } catch (error) {
+    logger.error(
+      `Unable to get package size data for ${project.toString()} ${
+        error.message
+      }`
+    )
+    return { errorMessage: error.message || 'Error!' }
+  }
+}
+
 const updateProject = ({ logger }) => async project => {
   const updates = {
     npm: fetchNpmRegistryData,
     npms: fetchNpmsData,
-    bundle: fetchBundleData
+    bundle: fetchBundleData,
+    packageSize: fetchPackageSizeData
   }
   const options = { concurrency: 1 }
   return Promise.map(

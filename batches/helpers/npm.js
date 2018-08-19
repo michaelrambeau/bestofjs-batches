@@ -65,10 +65,31 @@ function getBundleData(packageName) {
     })
 }
 
+function getPackageSizeData(packageName, version) {
+  const url = `https://packagephobia.now.sh/api.json?p=${encodeURIComponent(
+    packageName
+  )}@${version}`
+  const headers = {
+    'x-packagephobia-user': 'bestofjs.com'
+  }
+  const options = {
+    headers
+  }
+  return fetch(url, options)
+    .then(r => r.json())
+    .catch(e => {
+      // Internal Server Errors (no valid JSON) returned for several projects including `node-sass`
+      const message = `Invalid response from ${url} ${e.message ||
+        '(no message)'}`
+      return { error: { message } }
+    })
+}
+
 module.exports = {
   getNpmRegistryData,
   getPackageQualityData,
   getNpmsData,
   formatDependencies,
-  getBundleData
+  getBundleData,
+  getPackageSizeData
 }

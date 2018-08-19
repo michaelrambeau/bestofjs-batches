@@ -82,7 +82,7 @@ const getProjectHomepage = project => {
 
 // Return the JSON object to save later in the filesystem
 function createSuperproject(project, report) {
-  var data = {
+  const data = {
     name: project.name, // Project name entered in the application (not the one from Github)
     stars: report.stars,
     deltas: report.deltas.slice(0, 7),
@@ -110,16 +110,11 @@ function createSuperproject(project, report) {
   // Add npm data if available
   if (project.npm && project.npm.name) {
     data.npm = project.npm.name
-    data.version = project.npm.version
-    data.dependency_count = project.npm.dependencies.length
   }
 
   // Project custom URL (will be displayed instead of Github owner's avatar)
   if (project.icon && project.icon.url) {
     data.icon = project.icon.url
-  }
-  if (project.bundle && project.bundle.gzip) {
-    data.gzip = project.bundle.gzip
   }
 
   return data

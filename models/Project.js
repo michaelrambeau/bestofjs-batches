@@ -50,6 +50,13 @@ fields = {
     version: String,
     errorMessage: String
   },
+  packageSize: {
+    name: String,
+    installSize: Number,
+    publishSize: Number,
+    version: String,
+    errorMessage: String
+  },
   packagequality: {
     quality: Number
   },
