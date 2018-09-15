@@ -5,7 +5,9 @@ mongoose = require('mongoose')
 fields = {
   name: String,
   url: String,
+  override_url: Boolean,
   description: String,
+  override_description: Boolean,
   repository: String,
   tags: [
     {

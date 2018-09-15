@@ -74,31 +74,38 @@ function getProjects(options) {
 }
 
 const getProjectHomepage = project => {
-  const homepage = project.github.homepage
+  const { github: { homepage }, url, override_url } = project
+  if (override_url) return url
   // npm package page is not a valid homepage!
-  const isValid = url => !/npmjs\.com/.test(url) && !/npm\.im/.test(url)
-  return homepage && isValid(homepage) ? homepage : project.url
+  const invalidPatterns = ['npmjs.com/', 'npm.im/', 'npmjs.org/', 'github.com/']
+  const isValid = url => !invalidPatterns.some(re => new RegExp(re).test(url))
+  return homepage && isValid(homepage) ? homepage : url
 }
 
 // Return the JSON object to save later in the filesystem
 function createSuperproject(project, report) {
+  const url = getProjectHomepage(project)
+  const description =
+    project.github.description && !project.override_description
+      ? project.github.description
+      : project.description
   const data = {
     name: project.name, // Project name entered in the application (not the one from Github)
     stars: report.stars,
     deltas: report.deltas.slice(0, 7),
     monthly: report.monthlyTrends,
-    url: getProjectHomepage(project),
     full_name: project.github.full_name, // 'strongloop/express' for example.
-    description: project.github.description
-      ? project.github.description
-      : project.description,
+    description,
     pushed_at: project.github.pushed_at,
-    owner_id: project.github.owner_id,
     // The Github topics are coming soon!
     // topics: project.github.topics
     //   .filter(topic => topic !== 'javascript'),
     tags: project.tags.map(project => project.code),
     contributor_count: project.github.contributor_count
+  }
+
+  if (url) {
+    data.url = url
   }
 
   // Add Github default branch only if it's different from `master`
@@ -112,9 +119,11 @@ function createSuperproject(project, report) {
     data.npm = project.npm.name
   }
 
-  // Project custom URL (will be displayed instead of Github owner's avatar)
+  // Project custom icon (will be displayed instead of Github owner's avatar)
   if (project.icon && project.icon.url) {
     data.icon = project.icon.url
+  } else {
+    data.owner_id = project.github.owner_id
   }
 
   return data
