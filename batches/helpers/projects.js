@@ -96,6 +96,7 @@ function createSuperproject(project, report) {
     monthly: report.monthlyTrends,
     full_name: project.github.full_name, // 'strongloop/express' for example.
     description,
+    owner_id: project.github.owner_id,
     pushed_at: project.github.pushed_at,
     // The Github topics are coming soon!
     // topics: project.github.topics
@@ -122,8 +123,6 @@ function createSuperproject(project, report) {
   // Project custom icon (will be displayed instead of Github owner's avatar)
   if (project.icon && project.icon.url) {
     data.icon = project.icon.url
-  } else {
-    data.owner_id = project.github.owner_id
   }
 
   return data
