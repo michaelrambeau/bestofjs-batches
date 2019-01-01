@@ -118,6 +118,7 @@ function createSuperproject(project, report) {
   // Add npm data if available
   if (project.npm && project.npm.name) {
     data.npm = project.npm.name
+    data.version = project.npm.version
   }
 
   // Project custom icon (will be displayed instead of Github owner's avatar)

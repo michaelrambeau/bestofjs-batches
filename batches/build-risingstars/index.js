@@ -6,7 +6,7 @@ const helpers = require('../helpers/projects')
 const { processAllProjects, getProjects } = helpers
 const processProject = require('./process-project')
 
-const year = 2017
+const year = 2018
 
 async function start(options) {
   const { logger } = options

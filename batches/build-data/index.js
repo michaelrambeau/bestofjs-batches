@@ -1,4 +1,5 @@
 // Batch #2: from snapshots saved in the database, build a JSON file saved in `build` folder
+const omit = require('lodash/omit')
 const helpers = require('../helpers/projects')
 const processAllProjects = helpers.processAllProjects
 const getProjects = helpers.getProjects
@@ -44,6 +45,8 @@ async function start(options) {
   const filteredProjects = superprojects
     .filter(item => !!item) // remove null items that might be created if error occurred
     .filter(project => project.deltas.length > 0)
+    .slice()
+    .map(project => omit(project, ['version'])) // we don't need the `version` in `projects.json`
   const json = { date: new Date(), tags, projects: filteredProjects }
   await save(json, 'projects.json')
   const meta = Object.assign({}, result.meta, {
@@ -56,6 +59,7 @@ async function start(options) {
 
   // STEP 4
   await buildAndSaveCompactList({ json, logger })
+  await buildAndSaveNpmList({ allProjects: superprojects, logger })
   return finalResult
 }
 
@@ -64,7 +68,26 @@ function buildAndSaveCompactList({ json, logger }) {
   logger.info('State of JavaScript JSON file created!', {
     count: compactJson.count
   })
-  return save(compactJson, 'stateofjs2017.json')
+  return save(compactJson, 'stateofjs2018.json')
 }
+
+/*
+Build the file used by `fetch-license` service, on bestofjs-now-microservices` app
+*/
+function buildAndSaveNpmList({ allProjects, logger }) {
+  const projects = allProjects.filter(project => !!project.npm)
+  const count = projects.length
+  const date = new Date()
+  logger.info('Npm list created', {
+    count
+  })
+  const output = {
+    date,
+    count,
+    projects
+  }
+  return save(output, 'npm-projects.json')
+}
+
 
 module.exports = start

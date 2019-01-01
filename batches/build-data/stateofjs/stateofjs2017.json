@@ -4,7 +4,9 @@
     { "key": "flow", "text": "Flow" },
     { "key": "elm", "text": "Elm" },
     { "key": "clojurescript", "text": "ClojureScript" },
-    { "key": "reason", "text": "Reason" }
+    { "key": "reason", "text": "Reason" },
+    { "key": "purescript", "text": "PureScript" },
+    { "key": "coffeescript", "text": "CoffeeScript" }
   ],
   "frontend": [
     { "key": "react", "text": "React" },
@@ -26,7 +28,12 @@
     { "key": "choo", "text": "Choo" },
     { "key": "marionette", "text": "Marionette" },
     { "key": "marko", "text": "Marko" },
-    { "key": "riotjs", "text": "Riot" }
+    { "key": "riotjs", "text": "Riot" },
+    { "key": "dojo", "text": "Dojo" },
+    { "key": "canjs", "text": "CanJS" },
+    { "key": "glimmerjs", "text": "Glimmer.js" },
+    { "key": "web-components", "text": "Web Components" },
+    { "key": "reagent", "text": "Reagent" }
   ],
   "backend": [
     { "key": "meteor", "text": "Meteor" },
@@ -59,7 +66,10 @@
     { "key": "rxjs", "text": "RxJS" },
     { "key": "realm", "text": "Realm" },
     { "key": "gun", "text": "Gun.js" },
-    { "key": "cerebral", "text": "Cerebral" }
+    { "key": "cerebral", "text": "Cerebral" },
+    { "key": "ember-data", "text": "ember-data" },
+    { "key": "ngrx", "text": "NgRx" },
+    { "key": "mongodb", "text": "MongoDB" }
   ],
   "testing": [
     { "key": "mocha", "text": "Mocha" },
@@ -72,14 +82,16 @@
     { "key": "chai", "text": "Chai" },
     { "key": "nightwatch", "text": "Nightwatch" },
     { "key": "node-tap", "text": "Tap" },
-    { "key": "cypress", "text": "cypress" },
-    { "key": "intern", "text": "intern" },
+    { "key": "cypress", "text": "Cypress" },
+    { "key": "intern", "text": "Intern" },
     { "key": "phantomjs", "text": "PhantomJS" },
     { "key": "nightmare", "text": "Nightmare" },
     { "key": "sinonjs", "text": "Sinon" },
     { "key": "testcafe", "text": "TestCafe" },
     { "key": "qunit", "text": "QUnit" },
-    { "key": "protractor", "text": "Protractor" }
+    { "key": "protractor", "text": "Protractor" },
+    { "key": "cucumberjs", "text": "Cucumber.js" },
+    { "key": "storybook", "text": "Storybook" }
   ],
   "css": [
     { "key": "sass", "text": "SASS/SCSS" },
@@ -106,7 +118,6 @@
     { "key": "grunt", "text": "Grunt" },
     { "key": "gulp", "text": "Gulp" },
     { "key": "browserify", "text": "Browserify" },
-    { "key": "npm", "text": "NPM" },
     { "key": "rollup", "text": "Rollup" },
     { "key": "brunch", "text": "Brunch" },
     { "key": "broccoli", "text": "Broccoli" },
@@ -120,7 +131,11 @@
     { "key": "react-native", "text": "React Native" },
     { "key": "ionic", "text": "Ionic" },
     { "key": "nativescript", "text": "NativeScript" },
-    { "key": "electron", "text": "Electron" }
+    { "key": "electron", "text": "Electron" },
+    { "key": "weex", "text": "Weex" },
+    { "key": "nwjs", "text": "NW.js" },
+    { "key": "quasar", "text": "Quasar" },
+    { "key": "expo", "text": "Expo" }
   ],
   "tools": [{ "key": "yarn", "text": "Yarn" }, { "key": "npm", "text": "NPM" }]
 }
