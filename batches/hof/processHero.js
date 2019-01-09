@@ -24,12 +24,25 @@ async function processHero(hero, options) {
   }
 }
 
+const getHeroHomepage = hero => {
+  const {
+    github: { blog },
+    url,
+    override_url
+  } = hero
+  if (override_url) return url
+  // npm package page is not a valid homepage!
+  const invalidPatterns = ['npmjs.com/', 'npm.im/', 'npmjs.org/', 'github.com/']
+  const isValid = url => !invalidPatterns.some(re => new RegExp(re).test(url))
+  return blog && isValid(blog) ? blog : url
+}
+
 function aggregateHeroData(hero, meta) {
   const payload = {
     username: hero.github.login,
     avatar: hero.github.avatar_url,
     followers: hero.github.followers,
-    blog: hero.github.blog,
+    blog: getHeroHomepage(hero),
     name: hero.github.name,
     projects: hero.projects,
     bio: hero.short_bio,
