@@ -37,7 +37,8 @@ fields = {
     topics: Array,
     commit_count: Number,
     contributor_count: Number,
-    created_at: Date
+    created_at: Date,
+    archived: Boolean
   },
   npm: {
     name: String,
@@ -93,7 +94,10 @@ schema.methods.toString = function() {
 // For some projects, don't use the GitHub description that is not really relevant
 schema.methods.getDescription = function() {
   const { full_name, description } = this.github
-  const overrideDescriptionList = ['apache/incubator-weex']
+  const overrideDescriptionList = [
+    'apache/incubator-weex',
+    'PanJiaChen/vue-element-admin'
+  ]
   const isNotRelevant = overrideDescriptionList.includes(full_name)
   const overrideGithubDescription = isNotRelevant || !description
   return overrideGithubDescription ? this.description : description

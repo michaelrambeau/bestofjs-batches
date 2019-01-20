@@ -21,13 +21,14 @@ const processProject = options => async project => {
     contributor_count
   })
   logger.debug('STEP 3: save a snapshot record for today, if needed.')
-  const {
-    created,
-    previous
-  } = await takeSnapshotIfNeeded(project, stargazers_count, {
-    models: options.models,
-    logger
-  })
+  const { created, previous } = await takeSnapshotIfNeeded(
+    project,
+    stargazers_count,
+    {
+      models: options.models,
+      logger
+    }
+  )
   let updated = false
   project.github = Object.assign({}, githubData, {
     topics,
@@ -69,7 +70,8 @@ function parseGithubData(data) {
         'homepage',
         'stargazers_count',
         'pushed_at',
-        'created_at'
+        'created_at',
+        'archived'
       ]),
     json =>
       Object.assign({}, json, {
