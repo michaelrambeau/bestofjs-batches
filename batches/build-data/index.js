@@ -45,6 +45,7 @@ async function start(options) {
   const filteredProjects = superprojects
     .filter(item => !!item) // remove null items that might be created if error occurred
     .filter(project => project.deltas.length > 0)
+    .filter(project => project.stars >= 50) // show only projects with more than 50 stars
     .slice()
     .map(project => omit(project, ['version'])) // we don't need the `version` in `projects.json`
   const json = { date: new Date(), tags, projects: filteredProjects }
@@ -88,6 +89,5 @@ function buildAndSaveNpmList({ allProjects, logger }) {
   }
   return save(output, 'npm-projects.json')
 }
-
 
 module.exports = start
