@@ -74,10 +74,20 @@ function getProjects(options) {
 }
 
 const getProjectHomepage = project => {
-  const { github: { homepage }, url, override_url } = project
+  const {
+    github: { homepage },
+    url,
+    override_url
+  } = project
   if (override_url) return url
   // npm package page is not a valid homepage!
-  const invalidPatterns = ['npmjs.com/', 'npm.im/', 'npmjs.org/', 'github.com/']
+  const invalidPatterns = [
+    'npmjs.com/',
+    'npm.im/',
+    'npmjs.org/',
+    'github.com/',
+    'twitter.com/'
+  ]
   const isValid = url => !invalidPatterns.some(re => new RegExp(re).test(url))
   return homepage && isValid(homepage) ? homepage : url
 }
