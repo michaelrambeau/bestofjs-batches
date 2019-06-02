@@ -9,13 +9,16 @@
 
 const updateProject = require('./update-project-github')
 
+const createClient = require('../shared/github-api-client')
 const helpers = require('../helpers/projects')
 const processAllProjects = helpers.processAllProjects
 const getProjects = helpers.getProjects
 
 async function start(options) {
   const { logger } = options
-  // STEP 1: grab all projects, exluding "deprecated" projects
+  const accessToken = process.env.GITHUB_ACCESS_TOKEN
+  const client = createClient(accessToken)
+  // STEP 1: grab all projects, excluding "deprecated" projects
   const defaultSearchOptions = {
     deprecated: { $ne: true }
   }
@@ -27,9 +30,14 @@ async function start(options) {
     })
   )
   // STEP 2: take the snapshot for every project (if it has been already taken today)
-  return await processAllProjects(projects, updateProject(options), {
-    logger
-  })
+  return await processAllProjects(
+    projects,
+    updateProject({ ...options, client }),
+    {
+      logger,
+      concurrency: 5
+    }
+  )
 }
 
 module.exports = start

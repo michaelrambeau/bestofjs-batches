@@ -18,6 +18,7 @@ const addMissingSnapshots = require('./add-missing-snapshots')
 // npm branch daily scripts
 const updateNpmData = require('./update-from-npm/projects')
 const updateHoFNpmData = require('./update-from-npm/hof')
+const fixRepoInfo = require('./fix-repo-info')
 
 const argv = minimist(process.argv.slice(2))
 const options = getOptions(argv)
@@ -38,7 +39,10 @@ logger.info(
   'Connecting to',
   mongo_uri.replace(/(mongodb:\/\/)(.+):(.+)(@.+)/, '$1***@***$4')
 )
-mongoose.connect(mongo_uri, { useMongoClient: true })
+mongoose.connect(
+  mongo_uri,
+  { useMongoClient: true }
+)
 
 // Load Mongoose models
 const Project = require('../models/Project')
@@ -78,7 +82,8 @@ const handlers = {
   'daily-database-process': dailyDatabaseProcess,
   trends: initTrends,
   risingstars: buildRisingStars,
-  missing: addMissingSnapshots
+  missing: addMissingSnapshots,
+  fix: fixRepoInfo
 }
 
 async function startBatch(key, options) {

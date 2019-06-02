@@ -38,7 +38,8 @@ fields = {
     commit_count: Number,
     contributor_count: Number,
     created_at: Date,
-    archived: Boolean
+    archived: Boolean,
+    last_commit: Date
   },
   npm: {
     name: String,

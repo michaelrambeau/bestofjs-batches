@@ -107,7 +107,7 @@ function createSuperproject(project, report) {
     full_name: project.github.full_name, // 'strongloop/express' for example.
     description,
     owner_id: project.github.owner_id,
-    pushed_at: project.github.pushed_at,
+    pushed_at: project.github.last_commit,
     // The Github topics are coming soon!
     // topics: project.github.topics
     //   .filter(topic => topic !== 'javascript'),

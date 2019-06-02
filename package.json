@@ -4,10 +4,8 @@
   "description": "bestof.js.org batches (scheduled tasks)",
   "main": "index.js",
   "scripts": {
-    "daily":
-      "node batches daily-database-process && npm run deploy:prod && npm run notify",
-    "daily-npm-update":
-      "node batches update-from-npm-projects && node batches update-from-npm-hof",
+    "daily": "node batches daily-database-process && npm run deploy:prod && npm run notify",
+    "daily-npm-update": "node batches update-from-npm-projects && node batches update-from-npm-hof",
     "deploy:prod": "firebase deploy --project prod",
     "deploy:dev": "firebase deploy --project dev",
     "notify": "node batches/send-daily-notification",
@@ -24,9 +22,11 @@
   },
   "dependencies": {
     "bluebird": "3.5.0",
+    "debug": "^4.1.1",
     "dotenv": "1.2.0",
     "firebase-tools": "6.0.0",
     "fs-extra": "^4.0.1",
+    "graphql-request": "^1.8.2",
     "lodash": "4.17.11",
     "minimist": "1.2.0",
     "moment": "2.19.3",

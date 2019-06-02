@@ -1,25 +1,22 @@
 const { pick, get, flow } = require('lodash')
 
-const { getScrapingData, getRepoData } = require('../helpers/github')
+const { getRepoData } = require('../helpers/github')
 const { getLastSnapshot, isTodaySnapshot } = require('../helpers/snapshots')
 const { updateDailyTrendsIfNeeded } = require('./helpers')
 
 const processProject = options => async project => {
-  const { logger, readonly } = options
+  const { logger, readonly, client } = options
+
   logger.debug('STEP 1: get project data from Github API', project.toString())
-  const githubData = await getGithubData(project)
+  const githubData = await client.fetchRepoInfo(project.github.full_name)
   const { full_name, stargazers_count } = githubData
-  logger.debug('STEP 2: Get topics by scrapping Github web page', { full_name })
-  const { topics, commit_count, contributor_count } = await getScrapingData(
-    full_name,
-    options
-  )
-  logger.debug('Scraping data', {
-    full_name,
-    topics,
-    commit_count,
-    contributor_count
+
+  logger.debug('STEP 2: Get `contributor_count` by scrapping Github web page', {
+    full_name
   })
+  const contributor_count = await client.fetchContributorCount(full_name)
+  logger.debug('Data from scraping', { contributor_count })
+
   logger.debug('STEP 3: save a snapshot record for today, if needed.')
   const { created, previous } = await takeSnapshotIfNeeded(
     project,
@@ -30,16 +27,16 @@ const processProject = options => async project => {
     }
   )
   let updated = false
-  project.github = Object.assign({}, githubData, {
-    topics,
-    contributor_count,
-    commit_count
+  project.github = Object.assign(project.github, githubData, {
+    contributor_count
   })
   if (created) {
     // Update `trends.daily` if a snapshot has been saved
     project.trends = updateDailyTrendsIfNeeded(project, previous, options)
   }
-  if (!readonly) {
+  if (readonly) {
+    logger.debug('Readonly mode', githubData)
+  } else {
     logger.debug('STEP 4: update project record from Github data', {
       githubData
     })
@@ -54,31 +51,6 @@ const processProject = options => async project => {
     }
   }
   return { meta: { createdSnapshots: created === 1, updated } }
-}
-
-function getGithubData(project) {
-  return getRepoData(project).then(parseGithubData)
-}
-
-function parseGithubData(data) {
-  return flow([
-    json =>
-      pick(json, [
-        'name',
-        'full_name',
-        'description',
-        'homepage',
-        'stargazers_count',
-        'pushed_at',
-        'created_at',
-        'archived'
-      ]),
-    json =>
-      Object.assign({}, json, {
-        owner_id: get(data, 'owner.id'),
-        branch: get(data, 'default_branch')
-      })
-  ])(data)
 }
 
 async function takeSnapshotIfNeeded(project, stars, options) {
