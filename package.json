@@ -26,6 +26,7 @@
     "dotenv": "1.2.0",
     "firebase-tools": "6.0.0",
     "fs-extra": "^4.0.1",
+    "gh-got": "^8.1.0",
     "graphql-request": "^1.8.2",
     "lodash": "4.17.11",
     "minimist": "1.2.0",

@@ -1,6 +1,8 @@
 const { GraphQLClient } = require('graphql-request')
+const githubRequest = require('gh-got')
 const scrapeIt = require('scrape-it')
 const debug = require('debug')('github-client')
+const { get } = require('lodash')
 
 const { queryRepoInfo, extractRepoInfo } = require('./repo-info-query')
 
@@ -11,15 +13,61 @@ function createClient(accessToken) {
     }
   })
 
+  const fetchRepoInfoMain = fullName => {
+    const [owner, name] = fullName.split('/')
+    debug('Fetch repo info from GitHub GraphQL', owner, name)
+    return graphQLClient
+      .request(queryRepoInfo, { owner, name })
+      .then(extractRepoInfo)
+  }
+
+  const fetchRepoInfoFallback = async fullName => {
+    debug('Fetch repo info using the REST API', fullName)
+    const { body: repoInfo } = await githubRequest(`repos/${fullName}`, {
+      accessToken
+    })
+    const { name, full_name, description, stargazers_count, owner } = repoInfo
+    return {
+      name,
+      full_name,
+      description,
+      stargazers_count,
+      owner_id: owner.id
+    }
+  }
+
+  const fetchRepoInfoSafe = async fullName => {
+    try {
+      const repoInfo = await fetchRepoInfoMain(fullName)
+      return repoInfo
+    } catch (error) {
+      if (isErrorNotFound(error)) {
+        debug(`The repo "${fullName}" was mot found, try the fallback method!`)
+        const { full_name: updatedFullName } = await fetchRepoInfoFallback(
+          fullName
+        )
+        const repoInfo = await fetchRepoInfoMain(updatedFullName)
+        return repoInfo
+      } else {
+        throw error
+      }
+    }
+  }
+
+  const isErrorNotFound = error => {
+    const errorType = get(error, 'response.errors[0].type')
+    return errorType === 'NOT_FOUND'
+  }
+
+  // === Public API for the GitHub client ===
+
   return {
-    fetchRepoInfo(fullName) {
-      const [owner, name] = fullName.split('/')
-      debug('Fetch repo info', owner, name)
-      return graphQLClient
-        .request(queryRepoInfo, { owner, name })
-        .then(extractRepoInfo)
-    },
+    fetchRepoInfo: fetchRepoInfoSafe,
+
+    fetchRepoInfoFallback,
+
     async fetchContributorCount(fullName) {
+      debug('Fetching the number of contributors by scraping', fullName)
       const url = `https://github.com/${fullName}/contributors_size`
       const { contributor_count } = await scrapeIt(url, {
         contributor_count: {
