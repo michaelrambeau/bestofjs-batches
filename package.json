@@ -33,7 +33,7 @@
     "moment": "2.19.3",
     "moment-timezone": "^0.5.13",
     "mongoose": "4.11.7",
-    "node-fetch": "^1.7.2",
+    "node-fetch": "^2.6.1",
     "package-json": "^4.0.1",
     "pretty-ms": "^3.0.0",
     "request": "2.63.0",
